@@ -1,0 +1,7 @@
+{
+  "name": "abrs-frontend2025",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
