@@ -1,0 +1,44 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>Flight Operations</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-list lines="full">
+    @for (flight of flights; track flight.id) {
+      <ion-item-group>
+        <ion-item lines="none">
+          <ion-icon name="airplane-outline" slot="start" color="primary"></ion-icon>
+          <ion-label>
+            <h2 style="font-weight: bold; font-size: 1.2rem;">{{ flight.flightNumber }}</h2>
+            <p>{{ flight.departureAirport }} ➔ {{ flight.arrivalAirport }}</p>
+            <p><ion-note>{{ flight.departureTime | date:'MMM d, HH:mm' }}</ion-note></p>
+          </ion-label>
+          <ion-badge slot="end" [color]="getStatusColor(flight.status)">
+            {{ flight.status }}
+          </ion-badge>
+        </ion-item>
+
+        <ion-item lines="full">
+          <div style="display: flex; width: 100%; gap: 10px; padding-bottom: 10px;">
+            <ion-button fill="outline" size="small" (click)="goToCheckIn(flight.id)" style="flex: 1;">
+              <ion-icon name="log-in-outline" slot="start"></ion-icon>
+              CHECK-IN
+            </ion-button>
+            
+            <ion-button fill="solid" size="small" (click)="viewFlight(flight.id)" style="flex: 1;">
+              <ion-icon name="checkmark-done-circle-outline" slot="start"></ion-icon>
+              BOARDING
+            </ion-button>
+          </div>
+        </ion-item>
+      </ion-item-group>
+    } @empty {
+      <div class="ion-padding ion-text-center" style="margin-top: 50px;">
+        <ion-icon name="cloud-offline-outline" size="large" color="medium"></ion-icon>
+        <p>No active flights available.</p>
+      </div>
+    }
+  </ion-list>
+</ion-content>

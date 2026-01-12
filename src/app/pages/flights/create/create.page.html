@@ -1,0 +1,37 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Register New Flight</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-list>
+    <ion-item>
+      <ion-label position="stacked">Flight Number</ion-label>
+      <ion-input [(ngModel)]="flight.flightNumber" placeholder="e.g. BA123" uppercase></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Origin (Airport Code)</ion-label>
+      <ion-input [(ngModel)]="flight.origin" placeholder="e.g. LHR"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Destination (Airport Code)</ion-label>
+      <ion-input [(ngModel)]="flight.destination" placeholder="e.g. JFK"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Departure Time</ion-label>
+      <ion-datetime [(ngModel)]="flight.departureTime" presentation="date-time"></ion-datetime>
+    </ion-item>
+  </ion-list>
+
+  <div class="ion-padding">
+    <ion-button expand="block" (click)="submitFlight()" [disabled]="!flight.flightNumber">
+      Create Flight & Pre-populate Sequences
+    </ion-button>
+  </div>
+
+  <ion-toast [isOpen]="showToast" [message]="toastMessage" [duration]="2000" (didDismiss)="showToast = false"></ion-toast>
+</ion-content>
