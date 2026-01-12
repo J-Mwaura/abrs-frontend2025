@@ -5,6 +5,11 @@
       <ion-label>Flights</ion-label>
     </ion-tab-button>
 
+    <ion-tab-button tab="create" href="/tabs/create">
+      <ion-icon name="add-circle-outline"></ion-icon>
+      <ion-label>New Flight</ion-label>
+    </ion-tab-button>
+
     <ion-tab-button tab="tab2" href="/tabs/tab2">
       <ion-icon aria-hidden="true" name="people"></ion-icon>
       <ion-label>Boarding</ion-label>
@@ -15,4 +20,10 @@
       <ion-label>Settings</ion-label>
     </ion-tab-button>
   </ion-tab-bar>
+
+  <ion-item>
+  <ion-icon name="moon-outline" slot="start"></ion-icon>
+  <ion-label>Dark Mode</ion-label>
+  <ion-toggle (ionChange)="toggleDarkMode($event)"></ion-toggle>
+</ion-item>
 </ion-tabs>

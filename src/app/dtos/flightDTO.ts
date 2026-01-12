@@ -1,11 +1,14 @@
 export interface FlightDTO {
-  id?: number;                  // Optional for creation, present in response
-  flightNumber: string;
-  origin: string;               // Maps to departureAirport in Java
-  destination: string;          // Maps to arrivalAirport in Java
-  departureTime: string;        // Use ISO string (e.g., 2026-01-12T19:00:00Z)
-  checkedInSeats?: number;      // Calculated by backend
-  boardedSeats?: number;        // Calculated by backend
-  status?: string;              // Created, Active, Completed, etc.
+  id?: number;                  
+  flightNumber: string;  // required: The primary identifier (e.g., KQ001)
+  
+  // optional for "Quick Create"
+  origin?: string;              
+  destination?: string;         
+  departureTime?: string;       
+  
+  checkedInSeats?: number;      
+  boardedSeats?: number;        
+  status?: string;              
   notes?: string;
 }

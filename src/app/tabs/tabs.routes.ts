@@ -3,34 +3,34 @@ import { TabsPage } from './tabs.page';
 
 export const routes: Routes = [
   {
-    path: 'tabs',
+    path: '', // This matches 'tabs' from the parent
     component: TabsPage,
     children: [
       {
-        path: 'tab1',
-        loadComponent: () =>
-          import('../tab1/tab1.page').then((m) => m.Tab1Page),
+        path: 'flights',
+        loadComponent: () => import('../pages/flights/list/flights.page').then(m => m.FlightsPage)
       },
       {
-        path: 'tab2',
-        loadComponent: () =>
-          import('../tab2/tab2.page').then((m) => m.Tab2Page),
+        path: 'create',
+        loadComponent: () => import('../pages/flights/create/create.page').then(m => m.CreatePage)
       },
       {
-        path: 'tab3',
-        loadComponent: () =>
-          import('../tab3/tab3.page').then((m) => m.Tab3Page),
+        path: 'create',
+        loadComponent: () => import('../pages/flights/create/create.page').then(m => m.CreatePage)
+      },
+      {
+        path: 'check-in/:id',
+        loadComponent: () => import('../pages/passenger/check-in/check-in.page').then(m => m.CheckInPage)
+      },
+      {
+        path: 'flight-detail/:id',
+        loadComponent: () => import('../pages/flights/flight-detail/flight-detail.page').then(m => m.FlightDetailPage)
       },
       {
         path: '',
-        redirectTo: '/tabs/tab1',
+        redirectTo: 'flights',
         pathMatch: 'full',
       },
     ],
-  },
-  {
-    path: '',
-    redirectTo: '/tabs/tab1',
-    pathMatch: 'full',
-  },
+  }
 ];

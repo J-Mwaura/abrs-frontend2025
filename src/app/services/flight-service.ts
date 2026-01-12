@@ -3,7 +3,6 @@ import { environment } from 'src/environments/environment';
 import { Flight } from '../models/flight';
 import { HttpClient } from '@angular/common/http';
 import { ApiResponse } from '../dtos/reponse/api-response';
-import { BoardingSequence } from '../models/boarding-sequence';
 import { map } from 'rxjs/operators';
 import { FlightDTO } from '../dtos/FlightDTO';
 

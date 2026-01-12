@@ -1,37 +1,41 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>Register New Flight</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content class="ion-padding">
-  <ion-list>
-    <ion-item>
+  <form [formGroup]="flightForm" (ngSubmit)="onSubmit()">
+    <ion-item lines="full">
       <ion-label position="stacked">Flight Number</ion-label>
-      <ion-input [(ngModel)]="flight.flightNumber" placeholder="e.g. BA123" uppercase></ion-input>
+      <ion-input formControlName="flightNumber" placeholder="e.g. KQ001" uppercase></ion-input>
     </ion-item>
+    
+    @if (flightForm.get('flightNumber')?.touched && flightForm.get('flightNumber')?.invalid) {
+      <ion-text color="danger" class="ion-padding-start">
+        <small>Valid Flight Number required (3-10 characters).</small>
+      </ion-text>
+    }
 
-    <ion-item>
-      <ion-label position="stacked">Origin (Airport Code)</ion-label>
-      <ion-input [(ngModel)]="flight.origin" placeholder="e.g. LHR"></ion-input>
-    </ion-item>
+    <div class="ion-padding-top">
+      <ion-button expand="block" type="submit" [disabled]="flightForm.invalid || isLoading">
+        @if (isLoading) { <ion-spinner name="crescent"></ion-spinner> }
+        @else { Create Flight }
+      </ion-button>
+      
+      <ion-button expand="block" fill="outline" color="medium" (click)="generateFlightNumber()">
+        Generate Random ID
+      </ion-button>
+    </div>
+  </form>
 
-    <ion-item>
-      <ion-label position="stacked">Destination (Airport Code)</ion-label>
-      <ion-input [(ngModel)]="flight.destination" placeholder="e.g. JFK"></ion-input>
-    </ion-item>
-
-    <ion-item>
-      <ion-label>Departure Time</ion-label>
-      <ion-datetime [(ngModel)]="flight.departureTime" presentation="date-time"></ion-datetime>
-    </ion-item>
-  </ion-list>
-
-  <div class="ion-padding">
-    <ion-button expand="block" (click)="submitFlight()" [disabled]="!flight.flightNumber">
-      Create Flight & Pre-populate Sequences
-    </ion-button>
-  </div>
-
-  <ion-toast [isOpen]="showToast" [message]="toastMessage" [duration]="2000" (didDismiss)="showToast = false"></ion-toast>
+  @if (recentFlights.length > 0) {
+    <ion-list-header>
+      <ion-label>Recently Registered</ion-label>
+    </ion-list-header>
+    <ion-list>
+      @for (f of recentFlights; track f.flightNumber) {
+        <ion-item [routerLink]="['/check-in', f.id]">
+          <ion-label>
+            <h2>{{ f.flightNumber }}</h2>
+            <p>Created: {{ f.status }}</p>
+          </ion-label>
+        </ion-item>
+      }
+    </ion-list>
+  }
 </ion-content>

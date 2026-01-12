@@ -7,14 +7,15 @@ import { searchOutline, checkmarkCircleOutline, logInOutline, arrowUpOutline, ar
 import { BoardingSequence, BoardingStatus } from 'src/app/models/boarding-sequence';
 import { BoardingService } from 'src/app/services/boarding-service';
 import { addIcons } from 'ionicons';
-import { debounceTime, fromEvent } from 'rxjs';
 
 @Component({
   selector: 'app-check-in',
   templateUrl: './check-in.page.html',
   styleUrls: ['./check-in.page.scss'],
   standalone: true,
-  imports: [IonFabButton, IonFab, IonToast, IonText, IonListHeader, IonSearchbar, IonButton, IonBadge, IonLabel, IonIcon, IonItem, IonList, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [IonFabButton, IonFab, IonToast, IonText, IonListHeader, IonSearchbar, 
+    IonButton, IonBadge, IonLabel, IonIcon, IonItem, IonList, IonContent, IonHeader, 
+    IonTitle, IonToolbar, CommonModule, FormsModule]
 
 })
 export class CheckInPage implements OnInit  {

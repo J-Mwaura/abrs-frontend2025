@@ -36,17 +36,17 @@ private navCtrl = inject(NavController);
 }
 
   viewFlight(id: number) {
-  this.navCtrl.navigateForward(['/flight-detail', id]);
+  this.navCtrl.navigateForward(['/tabs/flight-detail', id]);
 }
 
 goToCheckIn(flightId: number) {
   // Directs to the Week 2 "Fast-Entry" Portal
-  this.navCtrl.navigateForward([`/check-in/${flightId}`]);
+  this.navCtrl.navigateForward([`/tabs/check-in/${flightId}`]);
 }
 
 goToBoarding(flightId: number) {
   // Directs to the Week 3 "Gate App" / Detail View
-  this.navCtrl.navigateForward([`/flight-detail/${flightId}`]);
+  this.navCtrl.navigateForward([`/tabs/flight-detail/${flightId}`]);
 }
 
 getStatusColor(status: string): string {
