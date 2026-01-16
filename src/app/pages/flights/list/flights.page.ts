@@ -36,12 +36,7 @@ private navCtrl = inject(NavController);
 }
 
   viewFlight(id: number) {
-  this.navCtrl.navigateForward(['/tabs/flight-detail', id]);
-}
-
-goToCheckIn(flightId: number) {
-  // Directs to the Week 2 "Fast-Entry" Portal
-  this.navCtrl.navigateForward([`/tabs/check-in/${flightId}`]);
+  this.navCtrl.navigateForward(['/tabs/board', id]);
 }
 
 goToBoarding(flightId: number) {
@@ -54,6 +49,7 @@ getStatusColor(status: string): string {
     case 'CREATED': return 'primary';
     case 'BOARDING': return 'success';
     case 'CLOSED': return 'medium';
+    case 'DELAYED': return 'warning';
     default: return 'primary';
   }
 }

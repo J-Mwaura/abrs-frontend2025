@@ -3,7 +3,7 @@ import { TabsPage } from './tabs.page';
 
 export const routes: Routes = [
   {
-    path: '', // This matches 'tabs' from the parent
+    path: '', 
     component: TabsPage,
     children: [
       {
@@ -14,13 +14,10 @@ export const routes: Routes = [
         path: 'create',
         loadComponent: () => import('../pages/flights/create/create.page').then(m => m.CreatePage)
       },
+      // 🔑 Added Boarding Route with ID parameter
       {
-        path: 'create',
-        loadComponent: () => import('../pages/flights/create/create.page').then(m => m.CreatePage)
-      },
-      {
-        path: 'check-in/:id',
-        loadComponent: () => import('../pages/passenger/check-in/check-in.page').then(m => m.CheckInPage)
+        path: 'board/:id',
+        loadComponent: () => import('../pages/passenger/board/board.page').then( m => m.BoardPage)
       },
       {
         path: 'flight-detail/:id',

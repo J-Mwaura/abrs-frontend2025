@@ -9,5 +9,9 @@ export const routes: Routes = [
   {
     path: 'tabs',
     loadChildren: () => import('./tabs/tabs.routes').then((m) => m.routes),
+  },
+  {
+    path: 'board',
+    loadComponent: () => import('./pages/passenger/board/board.page').then( m => m.BoardPage)
   }
 ];

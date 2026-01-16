@@ -1,17 +1,16 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { FlightDTO } from 'src/app/dtos/FlightDTO';
 import { FlightService } from 'src/app/services/flight-service';
-import {IonContent, IonList, IonItem, IonLabel, IonInput, IonButton, IonSpinner, IonText, IonNote, IonListHeader } from '@ionic/angular/standalone';
+import {IonContent, IonList, IonItem, IonLabel, IonInput, IonButton, IonSpinner, IonText, IonListHeader, IonBadge } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-
+import { FlightDto } from 'src/app/dtos/flight-dto';
 @Component({
   selector: 'app-create-flight',
   templateUrl: './create.page.html',
   styleUrls: ['./create.page.scss'],
   standalone: true, // Required for your current architecture
-  imports: [
+  imports: [IonBadge, 
     RouterLink,
     IonListHeader,
     CommonModule,
@@ -27,20 +26,23 @@ export class CreatePage implements OnInit {
   isLoading = false;
   successMessage = '';
   errorMessage = '';
-  recentFlights: FlightDTO[] = [];
+  recentFlights: FlightDto[] = [];
 
   private flightService = inject(FlightService);
 
-  constructor(
-    private fb: FormBuilder,
-    
-  ) {
+  constructor(private fb: FormBuilder) {
     this.flightForm = this.fb.group({
       flightNumber: ['', [
         Validators.required,
         Validators.minLength(3),
         Validators.maxLength(10),
         Validators.pattern('^[A-Za-z0-9]+$')
+      ]],
+      // 🔑 ADDED: highestSequence is required by your backend service
+      highestSequence: [150, [
+        Validators.required, 
+        Validators.min(1), 
+        Validators.max(500)
       ]]
     });
   }
@@ -60,16 +62,16 @@ export class CreatePage implements OnInit {
   }
 
   clearForm(): void {
-    this.flightForm.reset();
-    this.errorMessage = '';
-    this.successMessage = '';
-  }
+  this.flightForm.reset({
+    highestSequence: 150 // 👈 Reset to default instead of null
+  });
+  this.errorMessage = '';
+  this.successMessage = '';
+}
 
-  onSubmit(): void {
+ onSubmit(): void {
     if (this.flightForm.invalid) {
-      Object.keys(this.flightForm.controls).forEach(key => {
-        this.flightForm.get(key)?.markAsTouched();
-      });
+      this.flightForm.markAllAsTouched();
       return;
     }
 
@@ -77,30 +79,28 @@ export class CreatePage implements OnInit {
     this.errorMessage = '';
     this.successMessage = '';
 
-    const flightData: FlightDTO = {
+    // 🔑 ALIGNED: This object now matches what your Java createFlightWithSequences expects
+    const flightData: FlightDto = {
       flightNumber: this.flightForm.get('flightNumber')?.value.toUpperCase().trim(),
-      // Omit origin, destination, etc., so they are sent as undefined/null 
-      // which aligns with your database "Quick Create" strategy.
+      highestSequence: this.flightForm.get('highestSequence')?.value,
+      departureTime: null, // As per your requirement to make it null for now
     };
 
-    this.flightService.createFlight(flightData as FlightDTO).subscribe({
-      // 1. Allow 'response' to be FlightDTO or undefined
-      next: (response?: FlightDTO) => {
-
-        // 2. Add a check to ensure we have data
+    this.flightService.createFlight(flightData).subscribe({
+      next: (response?: FlightDto) => {
         if (response) {
-          this.successMessage = `Flight ${response.flightNumber} created successfully! Status: ${response.status || 'CREATED'}`;
+          // Success! response.flightDate will be "Today" thanks to your Mapper
+          this.successMessage = `Flight ${response.flightNumber} initialized for ${response.flightDate} with ${flightData.highestSequence} sequences.`;
           this.clearForm();
           this.addToRecentFlights(response);
         } else {
           this.errorMessage = "Backend returned empty data.";
         }
-
         this.isLoading = false;
       },
       error: (error: any) => {
-        this.errorMessage = error.message || 'Failed to create flight. Please try again.';
-        console.error('Flight creation error:', error);
+        // This catches the RuntimeException (Duplicate) or IllegalArgumentException from Java
+        this.errorMessage = error.message || 'Failed to create flight.';
         this.isLoading = false;
       }
     });
@@ -114,7 +114,7 @@ export class CreatePage implements OnInit {
     }
   }
 
-  private addToRecentFlights(flight: FlightDTO): void {
+  private addToRecentFlights(flight: FlightDto): void {
     // Add createdAt timestamp for display
     const flightWithTimestamp = {
       ...flight,

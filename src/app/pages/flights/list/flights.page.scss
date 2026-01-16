@@ -1,0 +1,77 @@
+// Custom variables for the operation dashboard
+:host {
+  --flight-card-bg: var(--ion-color-light);
+  --status-font-size: 0.75rem;
+}
+
+ion-content {
+  --background: #f4f5f8; // Subtle grey background to make cards pop
+}
+
+ion-item-group {
+  margin: 12px 16px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  overflow: hidden; // Ensures border-radius clips children
+  border: 1px solid rgba(var(--ion-color-primary-rgb), 0.1);
+}
+
+ion-item {
+  --padding-start: 16px;
+  --padding-end: 16px;
+  
+  h2 {
+    color: var(--ion-color-dark);
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+
+  p {
+    font-size: 0.9rem;
+    color: var(--ion-color-step-600);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+}
+
+ion-badge {
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: var(--status-font-size);
+}
+
+// Action button styling
+ion-button {
+  --border-radius: 8px;
+  font-weight: 600;
+  height: 38px;
+  margin: 0; // Handled by the flex gap in HTML
+  
+  ion-icon {
+    font-size: 1.2rem;
+  }
+}
+
+// Empty state styling
+.ion-text-center {
+  ion-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+  
+  p {
+    color: var(--ion-color-step-500);
+    font-weight: 500;
+  }
+}
+
+// Transition for hover/active state on cards (useful for desktop/web view)
+ion-item-group:active {
+  transform: scale(0.98);
+  transition: transform 0.1s ease-in-out;
+}

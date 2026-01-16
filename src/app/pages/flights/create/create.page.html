@@ -1,8 +1,9 @@
 <ion-content class="ion-padding">
   <form [formGroup]="flightForm" (ngSubmit)="onSubmit()">
+    
     <ion-item lines="full">
       <ion-label position="stacked">Flight Number</ion-label>
-      <ion-input formControlName="flightNumber" placeholder="e.g. KQ001" uppercase></ion-input>
+      <ion-input formControlName="flightNumber" placeholder="e.g. QR001" style="text-transform: uppercase;"></ion-input>
     </ion-item>
     
     @if (flightForm.get('flightNumber')?.touched && flightForm.get('flightNumber')?.invalid) {
@@ -10,6 +11,30 @@
         <small>Valid Flight Number required (3-10 characters).</small>
       </ion-text>
     }
+
+    <ion-item lines="full">
+      <ion-label position="stacked">Total Passenger Sequences (Capacity)</ion-label>
+      <ion-input type="number" formControlName="highestSequence" placeholder="e.g. 150"></ion-input>
+    </ion-item>
+
+    @if (flightForm.get('highestSequence')?.touched && flightForm.get('highestSequence')?.invalid) {
+      <ion-text color="danger" class="ion-padding-start">
+        <small>Please enter a valid capacity (1-500).</small>
+      </ion-text>
+    }
+
+    <div class="ion-padding">
+      @if (successMessage) {
+        <ion-text color="success">
+          <p class="ion-no-margin">{{ successMessage }}</p>
+        </ion-text>
+      }
+      @if (errorMessage) {
+        <ion-text color="danger">
+          <p class="ion-no-margin">{{ errorMessage }}</p>
+        </ion-text>
+      }
+    </div>
 
     <div class="ion-padding-top">
       <ion-button expand="block" type="submit" [disabled]="flightForm.invalid || isLoading">
@@ -32,7 +57,7 @@
         <ion-item [routerLink]="['/check-in', f.id]">
           <ion-label>
             <h2>{{ f.flightNumber }}</h2>
-            <p>Created: {{ f.status }}</p>
+            <p>Operational Date: {{ f.flightDate }}</p> <p>Status: <ion-badge color="primary">{{ f.status }}</ion-badge></p>
           </ion-label>
         </ion-item>
       }

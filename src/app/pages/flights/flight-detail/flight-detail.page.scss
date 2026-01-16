@@ -1,0 +1,112 @@
+// Custom variables for the boarding screen
+:host {
+  --ion-item-background: transparent;
+}
+
+ion-content {
+  --background: #f8f9fa; // Very light grey to separate the card and list
+}
+
+// 1. Top Card - Operational Summary
+ion-card {
+  margin: 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-left: 4px solid var(--ion-color-warning); // Highlighting status
+
+  ion-card-content {
+    padding: 16px;
+    
+    div {
+      h1 {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--ion-color-dark);
+      }
+      
+      p {
+        margin: 4px 0 0;
+        color: var(--ion-color-step-600);
+        font-size: 0.9rem;
+      }
+    }
+  }
+}
+
+// 2. Passenger List Styling
+ion-list {
+  background: transparent;
+  padding-bottom: 80px; // Space for the floating-style button at bottom
+
+  ion-list-header {
+    --color: var(--ion-color-step-700);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 8px;
+  }
+
+  ion-item {
+    --padding-start: 16px;
+    --inner-padding-end: 16px;
+    margin-bottom: 2px; // Subtle separation
+    --background: #ffffff;
+
+    ion-icon[slot="start"] {
+      font-size: 2.2rem; // Large person icon
+      margin-right: 16px;
+    }
+
+    h2 {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--ion-color-dark);
+    }
+
+    p {
+      font-size: 0.85rem;
+      color: var(--ion-color-success); // "Ready to board" in green
+      font-weight: 500;
+    }
+  }
+}
+
+// 3. Swipe Option Styling
+ion-item-option {
+  ion-icon {
+    font-size: 1.5rem;
+  }
+}
+
+// 4. Floating-style Bottom Button
+.ion-padding {
+  position: sticky;
+  bottom: 0;
+  background: linear-gradient(to top, #f8f9fa 80%, transparent);
+  z-index: 10;
+
+  ion-button {
+    --border-radius: 10px;
+    --box-shadow: 0 4px 10px rgba(var(--ion-color-danger-rgb), 0.3);
+    height: 54px;
+    font-weight: 700;
+    font-size: 1rem;
+  }
+}
+
+// 5. Empty State
+.ion-text-center {
+  margin-top: 60px;
+  
+  ion-icon {
+    font-size: 80px;
+    opacity: 0.4;
+    margin-bottom: 12px;
+  }
+  
+  p {
+    font-size: 1.1rem;
+    color: var(--ion-color-step-500);
+  }
+}

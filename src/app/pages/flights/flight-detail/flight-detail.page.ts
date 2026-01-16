@@ -7,6 +7,7 @@ import { FlightService } from 'src/app/services/flight-service';
 import { NavController } from '@ionic/angular';
 import { AlertController } from '@ionic/angular';
 import { BoardingService } from 'src/app/services/boarding-service';
+import { FlightDto } from 'src/app/dtos/flight-dto';
 
 
 
@@ -18,14 +19,13 @@ import { BoardingService } from 'src/app/services/boarding-service';
   imports: [IonItemOption, IonItemOptions, IonItem, IonItemSliding, IonLabel, IonListHeader, IonList, IonBadge, IonCardContent, IonBackButton, IonCard, IonButtons, IonButton, IonIcon, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
 })
 export class FlightDetailPage implements OnInit {
-  flightId!: number;
-  flight?: any;
-  checkedInSequences: any[] = [];
+ flightId!: number;
+  flight?: FlightDto; // 👈 Use the interface instead of any
+  checkedInSequences: any[] = []; // This should ideally be BoardingSequenceDTO[]
 
   private route = inject(ActivatedRoute);
   private flightService = inject(FlightService);
   private boardingService = inject(BoardingService);
-
   private navCtrl = inject(NavController);
   private alertCtrl = inject(AlertController);
 
@@ -35,53 +35,58 @@ export class FlightDetailPage implements OnInit {
   }
 
   loadData() {
-    this.flightService.getFlightById(this.flightId).subscribe(f => this.flight = f);
-    this.boardingService.getExpectedPassengers(this.flightId).subscribe(s => this.checkedInSequences = s);
+    // 🔑 Ensure we use the flightDate field in the UI
+    this.flightService.getFlightById(this.flightId).subscribe(f => {
+      this.flight = f;
+    });
+
+    // Fetches only passengers with status 'EXPECTED'
+    this.boardingService.getCheckedInPassengers(this.flightId).subscribe(s => {
+      this.checkedInSequences = s;
+    });
   }
 
   onBoard(sequence: any) {
-    this.boardingService.updateSequenceStatus(this.flightId, sequence.sequenceNumber, 'BOARDED')
-      .subscribe(() => {
-        // Move to bottom logic or remove from list
-        sequence.status = 'BOARDED';
-        this.loadData(); // Refresh to update the list view
-      });
-  }
+  this.boardingService.updateSequenceStatus(this.flightId, sequence.sequenceNumber, 'BOARDED')
+    .subscribe(() => {
+      // 1. Remove the boarded passenger from the local "Expected" list immediately
+      this.checkedInSequences = this.checkedInSequences.filter(s => s.sequenceNumber !== sequence.sequenceNumber);
+      
+      // 2. Increment the local boarded count so the header updates without a full reload
+      if (this.flight && this.flight.boardedSeats !== undefined) {
+        this.flight.boardedSeats++;
+      }
+    });
+}
 
   async confirmClose() {
-    // 1. Calculate stats
-    // We assume you have the full sequence list or can derive it
-    const totalCheckedIn = this.checkedInSequences.length;
-    // In a real scenario, you'd likely track 'boardedCount' as a variable
-    const boardedCount = this.flight.totalSequences - totalCheckedIn;
+    // 🔑 Use highestSequence to match your Java DTO and Angular interface
+    const totalCapacity = this.flight?.highestSequence || 0; 
+    const remainingToBoard = this.checkedInSequences.length;
+    const boardedCount = totalCapacity - remainingToBoard;
 
     const alert = await this.alertCtrl.create({
       header: 'Finalize Departure',
-      subHeader: `Flight ${this.flight.flightNumber}`,
+      subHeader: `Flight ${this.flight?.flightNumber}`,
       message: `
       <div class="summary-container">
         <p><strong>Boarded:</strong> ${boardedCount} ✅</p>
-        <p><strong>Missing:</strong> ${totalCheckedIn} ❌</p>
+        <p><strong>Missing:</strong> ${remainingToBoard} ❌</p>
         <hr>
         <p>Are you sure you want to close this flight? This will mark all remaining passengers as MISSING.</p>
       </div>
     `,
       buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel'
-        },
+        { text: 'Cancel', role: 'cancel' },
         {
           text: 'Confirm Departure',
-          handler: () => {
-            this.executeFinalClose();
-          }
+          handler: () => { this.executeFinalClose(); }
         }
       ]
     });
 
     await alert.present();
-  }
+}
 
   private executeFinalClose() {
     this.flightService.closeFlight(this.flightId).subscribe({

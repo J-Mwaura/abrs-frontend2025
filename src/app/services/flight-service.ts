@@ -4,7 +4,7 @@ import { Flight } from '../models/flight';
 import { HttpClient } from '@angular/common/http';
 import { ApiResponse } from '../dtos/reponse/api-response';
 import { map } from 'rxjs/operators';
-import { FlightDTO } from '../dtos/FlightDTO';
+import { FlightDto } from '../dtos/flight-dto';
 
 @Injectable({ providedIn: 'root' })
 export class FlightService {
@@ -12,8 +12,8 @@ export class FlightService {
   private baseUrl = environment.apiUrl + 'api/flights';
   private http = inject(HttpClient);
 
-  createFlight(flightData: Partial<FlightDTO>) {
-    return this.http.post<ApiResponse<FlightDTO>>(this.baseUrl, flightData)
+  createFlight(flightData: Partial<FlightDto>) {
+    return this.http.post<ApiResponse<FlightDto>>(this.baseUrl, flightData)
       .pipe(map(res => {
         if (res.success) return res.data;
         throw new Error(res.message);

@@ -11,10 +11,7 @@
   <ion-card>
     <ion-card-content>
       <div style="display: flex; justify-content: space-between; align-items: center;">
-        <div>
-          <h1 style="margin: 0;">{{ flight?.departureAirport }} → {{ flight?.arrivalAirport }}</h1>
-          <p>{{ flight?.departureTime | date:'shortTime' }} Departure</p>
-        </div>
+        
         <ion-badge color="warning">{{ flight?.status }}</ion-badge>
       </div>
     </ion-card-content>

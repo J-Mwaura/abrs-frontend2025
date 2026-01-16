@@ -4,29 +4,38 @@ import { HttpClient } from '@angular/common/http';
 import { BoardingSequence } from '../models/boarding-sequence';
 import { map } from 'rxjs/operators';
 import { ApiResponse } from '../dtos/reponse/api-response';
+import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class BoardingService {
-  
-  private baseUrl = environment.apiUrl + 'api/flights';
+
+  private baseUrl = environment.apiUrl + 'api/boarding';
   private http = inject(HttpClient);
 
-  // Check-in operations
-  checkInPassenger(flightId: number, sequenceNumber: number) {
-    return this.http.patch<ApiResponse<BoardingSequence>>(
-      `${this.baseUrl}/${flightId}/sequences/${sequenceNumber}/check-in`,
-      {} // Empty body, all data in URL
+  // Passenger status queries
+  getCheckedInPassengers(flightId: number) {
+    return this.http.get<ApiResponse<BoardingSequence[]>>(
+      `${this.baseUrl}/${flightId}/ready-to-board`
     ).pipe(map(res => this.unwrap(res)));
   }
 
-  // Passenger status queries
-  getExpectedPassengers(flightId: number) {
-    return this.http.get<ApiResponse<BoardingSequence[]>>(`${this.baseUrl}/${flightId}/expected`)
-      .pipe(map(res => this.unwrap(res)));
+  getBoardedPassengers(flightId: number): Observable<BoardingSequence[]> {
+    return this.http.get<ApiResponse<BoardingSequence[]>>(
+      `${this.baseUrl}/${flightId}/boarded`
+    ).pipe(map(res => this.unwrap(res)));
   }
-   updateSequenceStatus(flightId: number, sequenceNumber: string, status: string) {
+
+  // Undo boarding
+  undoBoarding(flightId: number, sequenceNumber: number): Observable<void> {
     return this.http.patch<ApiResponse<void>>(
-      `${this.baseUrl}/${flightId}/sequences/${sequenceNumber}/status`, 
+      `${this.baseUrl}/${flightId}/sequences/${sequenceNumber}/undo-board`,
+      {}
+    ).pipe(map(res => this.unwrap(res)));
+  }
+  
+  updateSequenceStatus(flightId: number, sequenceNumber: string, status: string) {
+    return this.http.patch<ApiResponse<void>>(
+      `${this.baseUrl}/${flightId}/sequences/${sequenceNumber}/status`,
       { status }
     ).pipe(map(res => this.unwrap(res)));
   }
@@ -34,16 +43,16 @@ export class BoardingService {
   // Status updates
   updatePassengerStatus(flightId: number, sequenceNumber: string, status: string) {
     return this.http.patch<ApiResponse<void>>(
-      `${this.baseUrl}/${flightId}/sequences/${sequenceNumber}/status`, 
+      `${this.baseUrl}/${flightId}/sequences/${sequenceNumber}/status`,
       { status }
     ).pipe(map(res => this.unwrap(res)));
   }
 
-  // Boarding operation
+  // 2. Use the specific BOARD endpoint instead of the generic STATUS one
   boardPassenger(flightId: number, sequenceNumber: number) {
     return this.http.patch<ApiResponse<void>>(
       `${this.baseUrl}/${flightId}/sequences/${sequenceNumber}/board`,
-      {}
+      {} 
     ).pipe(map(res => this.unwrap(res)));
   }
 
@@ -61,6 +70,12 @@ export class BoardingService {
     return this.http.post<ApiResponse<void>>(
       `${this.baseUrl}/${flightId}/sequences/${sequenceNumber}/note`,
       { note } // Matches your BoardingNoteRequest DTO
+    ).pipe(map(res => this.unwrap(res)));
+  }
+
+  getBoardingStats(flightId: number) {
+    return this.http.get<ApiResponse<any>>(
+      `${this.baseUrl}/${flightId}/stats`
     ).pipe(map(res => this.unwrap(res)));
   }
 
