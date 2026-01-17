@@ -16,3 +16,10 @@ export interface BoardingSequence {
   // or make the full Flight object optional.
   flightId?: number; 
 }
+
+export enum FlightStatus {
+  SCHEDULED = 'SCHEDULED',
+  BOARDING_OPEN = 'BOARDING_OPEN',
+  BOARDING_CLOSED = 'BOARDING_CLOSED',
+  DEPARTED = 'DEPARTED'
+}

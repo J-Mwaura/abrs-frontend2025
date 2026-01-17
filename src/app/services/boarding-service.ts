@@ -32,6 +32,10 @@ export class BoardingService {
       {}
     ).pipe(map(res => this.unwrap(res)));
   }
+
+   getBoardingSequences(flightId: number): Observable<BoardingSequence[]> {
+    return this.http.get<BoardingSequence[]>(`${this.baseUrl}/${flightId}/sequences`);
+  }
   
   updateSequenceStatus(flightId: number, sequenceNumber: string, status: string) {
     return this.http.patch<ApiResponse<void>>(

@@ -12,7 +12,7 @@
         <ion-icon name="airplane-outline" slot="start" color="primary"></ion-icon>
         <ion-label>
           <h2 style="font-weight: bold; font-size: 1.2rem;">{{ flight.flightNumber }}</h2>
-          <p>{{ flight.departureAirport }} ➔ {{ flight.arrivalAirport }}</p>
+         
           <p><ion-note>{{ flight.departureTime | date:'MMM d, HH:mm' }}</ion-note></p>
         </ion-label>
         <ion-badge slot="end" [color]="getStatusColor(flight.status)">
@@ -22,10 +22,33 @@
 
       <ion-item lines="full">
         <div style="display: flex; width: 100%; gap: 10px; padding-bottom: 10px;">
-          <ion-button fill="solid" size="small" (click)="viewFlight(flight.id!)" style="flex: 1;">
-            <ion-icon name="checkmark-done-circle-outline" slot="start"></ion-icon>
-            BOARDING
-          </ion-button>
+          
+          @if (flight.status === 'CREATED') {
+            <ion-button fill="solid" size="small" class="burgundy-btn" (click)="openFlightBoarding(flight.id!)" style="flex: 1;">
+              <ion-icon name="play-outline" slot="start"></ion-icon>
+              OPEN BOARDING
+            </ion-button>
+          }
+
+          @if (flight.status === 'BOARDING_OPEN') {
+            <ion-button fill="solid" color="success" size="small" (click)="viewFlight(flight.id!)" style="flex: 1;">
+              <ion-icon name="checkmark-done-circle-outline" slot="start"></ion-icon>
+              RESUME BOARDING
+            </ion-button>
+          }
+
+          @if (flight.status === 'BOARDING_CLOSED' || flight.status === 'DEPARTED') {
+            <ion-button fill="outline" color="medium" size="small" (click)="viewFlight(flight.id!)" style="flex: 1;">
+              <ion-icon name="eye-outline" slot="start"></ion-icon>
+              VIEW
+            </ion-button>
+
+            <ion-button fill="solid" color="danger" size="small" (click)="onDeleteFlight(flight.id!)" style="flex: 1;">
+              <ion-icon name="trash-outline" slot="start"></ion-icon>
+              DELETE
+            </ion-button>
+          }
+          
         </div>
       </ion-item>
     </ion-item-group>

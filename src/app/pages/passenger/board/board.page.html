@@ -1,75 +1,60 @@
 <ion-header [translucent]="true">
   <ion-toolbar color="primary">
+    <!-- <ion-buttons slot="start">
+      <ion-back-button defaultHref="/flights"></ion-back-button>
+    </ion-buttons> -->
     <ion-title>✈️ Boarding - Flight {{flightNumber}}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="refreshData()">
+        <ion-icon name="refresh-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
   <ion-toolbar>
-    <ion-segment [(ngModel)]="viewMode">
+    <ion-segment [(ngModel)]="viewMode" (ionChange)="onSegmentChange($event)">
       <ion-segment-button value="waiting">
         <ion-label>Waiting ({{stats.totalCheckedIn}})</ion-label>
       </ion-segment-button>
       <ion-segment-button value="boarded">
         <ion-label>Boarded ({{stats.totalBoarded}})</ion-label>
       </ion-segment-button>
+      <ion-segment-button value="gaps">
+        <ion-label>Gaps ({{stats.totalMissing}})</ion-label>
+      </ion-segment-button>
     </ion-segment>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding" scrollEvents="true" (ionScroll)="onContentScroll($event)">
+  <!-- Flight Status Badge -->
+  <div class="ion-text-center ion-padding-top" *ngIf="flightStatus">
+    <ion-badge [color]="flightStatus === 'BOARDING_CLOSED' ? 'success' : 'warning'" style="padding: 8px 16px;">
+      {{flightStatus.replace('_', ' ')}}
+    </ion-badge>
+  </div>
 
+  <!-- Stats Card -->
   <ion-card class="stats-card">
     <ion-card-content>
-      <div class="stats-grid">
+      <div class="stats-grid" style="display: flex; justify-content: space-around; text-align: center;">
         <div class="stat-item">
-          <h2 class="stat-value">{{stats.totalBoarded}}</h2>
-          <p class="stat-label">BOARDED</p>
+          <h2 class="stat-value" style="margin-bottom: 0;">{{stats.totalBoarded}}</h2>
+          <p class="stat-label" style="font-size: 0.8rem; color: var(--ion-color-medium);">BOARDED</p>
         </div>
         <div class="stat-item">
-          <h2 class="stat-value">{{stats.totalCheckedIn}}</h2>
-          <p class="stat-label">AT GATE</p>
+          <h2 class="stat-value" style="margin-bottom: 0;">{{stats.totalCheckedIn}}</h2>
+          <p class="stat-label" style="font-size: 0.8rem; color: var(--ion-color-medium);">AT GATE</p>
+        </div>
+        <div class="stat-item">
+          <h2 class="stat-value" style="margin-bottom: 0; color: var(--ion-color-danger);">{{stats.totalMissing}}</h2>
+          <p class="stat-label" style="font-size: 0.8rem; color: var(--ion-color-medium);">MISSING</p>
         </div>
       </div>
     </ion-card-content>
   </ion-card>
 
+  <!-- Waiting View -->
   <div *ngIf="viewMode === 'waiting'">
-    
-    <ion-card *ngIf="missingSequences.length > 0" class="gap-stats-card">
-      <ion-card-header>
-        <ion-card-title color="danger" style="font-size: 1.1rem; font-weight: 600;">
-          <ion-icon name="analytics-outline" slot="start"></ion-icon>
-          Gap Analysis
-        </ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <div class="gap-stats-row" style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-          <div class="gap-stat-item">
-            <p style="margin: 0; font-size: 0.8rem; color: #666;">SMALLEST</p>
-            <strong style="font-size: 1.2rem;">#{{minMissing}}</strong>
-          </div>
-          <div class="gap-stat-item">
-            <p style="margin: 0; font-size: 0.8rem; color: #666;">LARGEST</p>
-            <strong style="font-size: 1.2rem;">#{{maxMissing}}</strong>
-          </div>
-          <div class="gap-stat-item" style="text-align: right;">
-            <p style="margin: 0; font-size: 0.8rem; color: #666;">TOTAL MISSING</p>
-            <strong style="font-size: 1.2rem; color: var(--ion-color-danger);">{{missingSequences.length}}</strong>
-          </div>
-        </div>
-
-        <div class="range-info">
-          <ion-chip color="success" outline *ngIf="missingSequences.length > 1 && (maxMissing - minMissing + 1) === missingSequences.length">
-            <ion-icon name="checkmark-circle-outline"></ion-icon>
-            <ion-label>Continuous range: #{{minMissing}}-#{{maxMissing}}</ion-label>
-          </ion-chip>
-
-          <ion-chip color="warning" outline *ngIf="missingSequences.length > 1 && (maxMissing - minMissing + 1) !== missingSequences.length">
-            <ion-icon name="alert-circle-outline"></ion-icon>
-            <ion-label>Scattered Gaps Detected</ion-label>
-          </ion-chip>
-        </div>
-      </ion-card-content>
-    </ion-card>
-
     <ion-card class="search-card">
       <ion-card-content>
         <ion-searchbar #boardInput [(ngModel)]="searchQuery" (ionInput)="handleSearch($event)"
@@ -95,6 +80,7 @@
     </ion-list>
   </div>
 
+  <!-- Boarded View -->
   <div *ngIf="viewMode === 'boarded'">
     <ion-list class="boarded-list">
       <ion-list-header>
@@ -127,14 +113,136 @@
     </ion-list>
   </div>
 
+  <!-- Gaps View -->
+  <div *ngIf="viewMode === 'gaps'">
+    <ion-card class="gap-stats-card">
+      <ion-card-header>
+        <ion-card-title color="danger">
+          <ion-icon name="analytics-outline" slot="start"></ion-icon>
+          Gap Analysis
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="gap-stats-row" style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+          <div class="gap-stat-item">
+            <p style="margin: 0; font-size: 0.7rem;">SMALLEST</p>
+            <strong>#{{minMissing}}</strong>
+          </div>
+          <div class="gap-stat-item">
+            <p style="margin: 0; font-size: 0.7rem;">LARGEST</p>
+            <strong>#{{maxMissing}}</strong>
+          </div>
+          <div class="gap-stat-item" style="text-align: right;">
+            <p style="margin: 0; font-size: 0.7rem;">TOTAL MISSING</p>
+            <strong color="danger">{{missingSequences.length}}</strong>
+          </div>
+        </div>
+
+        <div class="range-info">
+          <ion-chip color="success" outline *ngIf="missingSequences.length > 1 && (maxMissing - minMissing + 1) === missingSequences.length">
+            <ion-icon name="checkmark-circle-outline"></ion-icon>
+            <ion-label>Continuous range: #{{minMissing}}-#{{maxMissing}}</ion-label>
+          </ion-chip>
+
+          <ion-chip color="warning" outline *ngIf="missingSequences.length > 1 && (maxMissing - minMissing + 1) !== missingSequences.length">
+            <ion-icon name="alert-circle-outline"></ion-icon>
+            <ion-label>Scattered Gaps Detected</ion-label>
+          </ion-chip>
+
+          <ion-chip color="medium" outline *ngIf="missingSequences.length === 0">
+            <ion-icon name="checkmark-done-outline"></ion-icon>
+            <ion-label>No Missing Sequences</ion-label>
+          </ion-chip>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <div class="ion-padding-horizontal ion-margin-bottom">
+      <!-- Close Boarding Section -->
+      <div *ngIf="flightStatus === 'BOARDING_OPEN'">
+        <ion-button expand="block" color="danger" (click)="confirmCloseFlight()" style="font-weight: bold;">
+          <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+          CLOSE BOARDING
+        </ion-button>
+        <p class="ion-text-center" style="font-size: 0.75rem; color: var(--ion-color-medium); margin-top: 8px;">
+          Finalizing will record all missing sequences as no-shows.
+        </p>
+      </div>
+
+      <!-- Report Generation Section -->
+      <div *ngIf="isBoardingClosed" class="ion-text-center">
+        <ion-badge color="success" style="padding: 10px; width: 100%; margin-bottom: 10px;">
+          <ion-icon name="checkmark-done-outline"></ion-icon> BOARDING FINALIZED
+        </ion-badge>
+        
+        <!-- Final Manifest Button -->
+        <ion-button expand="block" color="secondary" (click)="downloadPdf()" [disabled]="isDownloading">
+          <ion-spinner *ngIf="isDownloading" name="crescent" slot="start"></ion-spinner>
+          <ion-icon *ngIf="!isDownloading" name="document-text-outline" slot="start"></ion-icon>
+          <ion-label *ngIf="!isDownloading">EXPORT FINAL MANIFEST</ion-label>
+          <ion-label *ngIf="isDownloading">Generating PDF...</ion-label>
+        </ion-button>
+
+        <!-- Additional Report Options -->
+        <ion-button expand="block" color="primary" (click)="downloadBoardingReport()" [disabled]="isDownloading" fill="outline" style="margin-top: 8px;">
+          <ion-icon name="download-outline" slot="start"></ion-icon>
+          Download Boarding Report
+        </ion-button>
+
+        <ion-button expand="block" color="medium" (click)="previewPdf()" [disabled]="isDownloading" fill="clear" style="margin-top: 8px;">
+          <ion-icon name="eye-outline" slot="start"></ion-icon>
+          Preview Report
+        </ion-button>
+      </div>
+    </div>
+
+    <!-- Missing Sequences List -->
+    <ion-list class="gaps-list">
+      <ion-list-header>
+        <ion-label>Missing Sequences ({{filteredMissingSequences.length}})</ion-label>
+      </ion-list-header>
+
+      <ion-item *ngFor="let seq of filteredMissingSequences" button detail="true">
+        <ion-icon slot="start" name="alert-outline" color="danger"></ion-icon>
+        <ion-label>
+          <h2>Sequence #{{seq}}</h2>
+          <p>Not boarded</p>
+        </ion-label>
+        <ion-badge slot="end" color="danger">MISSING</ion-badge>
+      </ion-item>
+
+      <ion-item *ngIf="missingSequences.length === 0" class="ion-text-center">
+        <ion-label color="medium">
+          <ion-icon name="checkmark-done-outline" size="large"></ion-icon>
+          <h3>No Missing Sequences</h3>
+          <p>All passengers have checked in or boarded</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <!-- Loading Indicator -->
+  <div *ngIf="isLoading" class="ion-text-center ion-padding">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Loading data...</p>
+  </div>
+
+  <!-- Scroll Buttons -->
   <ion-fab slot="fixed" vertical="bottom" horizontal="end">
     <ion-fab-button (click)="scrollToTop()" *ngIf="showScrollTopButton" size="small" color="light">
       <ion-icon name="arrow-up-outline"></ion-icon>
     </ion-fab-button>
-    <ion-fab-button (click)="scrollToBottom()" *ngIf="showScrollBottomButton" size="small" color="light">
+    <ion-fab-button (click)="scrollToBottom()" *ngIf="showScrollBottomButton" size="small" color="light" class="ion-margin-top">
       <ion-icon name="arrow-down-outline"></ion-icon>
     </ion-fab-button>
   </ion-fab>
 
-  <ion-toast [isOpen]="showToast" [message]="toastMessage" [duration]="3000" (didDismiss)="showToast = false"></ion-toast>
+  <!-- Toast Notification -->
+  <ion-toast 
+    [isOpen]="showToast" 
+    [message]="toastMessage" 
+    [duration]="3000" 
+    (didDismiss)="showToast = false"
+    position="bottom">
+  </ion-toast>
 </ion-content>
