@@ -9,6 +9,7 @@ import {
   IonSegment, IonItemOptions, IonItemOption, IonItemSliding, IonSegmentButton,
   IonChip, AlertController, LoadingController, IonButtons, IonBackButton } from '@ionic/angular/standalone';
 import { ActivatedRoute } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 import {
   searchOutline, checkmarkCircleOutline, logInOutline,
   arrowUpOutline, arrowDownOutline,
@@ -22,26 +23,28 @@ import { BoardingService } from 'src/app/services/boarding-service';
 import { FlightService } from 'src/app/services/flight-service';
 import { addIcons } from 'ionicons';
 import { ReportService } from 'src/app/services/report-service';
+import { ConfirmationDialogService } from 'src/app/services/confirmation-dialogService';
+import { ToastrService } from 'src/app/services/toast-service';
 
 @Component({
   selector: 'app-board',
   templateUrl: './board.page.html',
   styleUrls: ['./board.page.scss'],
   standalone: true,
-  imports: [IonBackButton, IonButtons, 
+  imports: [IonButtons,
     IonSpinner,
     IonSegment, IonSegmentButton, IonItemSliding, IonItemOption, IonItemOptions,
     IonCardContent, IonCard, IonCardHeader, IonCardTitle, IonBadge, IonChip,
-    IonToast, IonListHeader, IonSearchbar, IonFab, IonFabButton,
+    IonListHeader, IonSearchbar, IonFab, IonFabButton,
     IonLabel, IonIcon, IonItem, IonList, IonContent, IonHeader,
-    IonTitle, IonToolbar, CommonModule, FormsModule, IonButton
-  ]
+    IonTitle, IonToolbar, CommonModule, FormsModule, IonButton]
 })
 export class BoardPage implements OnInit, AfterViewInit {
 
   @ViewChild(IonContent) content!: IonContent;
   @ViewChild('boardInput') boardInput: any;
-  @ViewChild('gapInput') gapInput: any;
+  // Remove this line since it's not in template
+  // @ViewChild('gapInput') gapInput: any;
 
   flightId!: number;
   flightNumber: string = '';
@@ -57,8 +60,6 @@ export class BoardPage implements OnInit, AfterViewInit {
   missingSequences: number[] = [];
   filteredMissingSequences: number[] = [];
 
-  showToast = false;
-  toastMessage = '';
   isLoading = false;
   isDownloading = false;
   showScrollTopButton = false;
@@ -78,10 +79,13 @@ export class BoardPage implements OnInit, AfterViewInit {
   private reportService = inject(ReportService);
   private alertController = inject(AlertController);
   private loadingController = inject(LoadingController);
+  private confirmationDialog = inject(ConfirmationDialogService);
+  private toastrService = inject(ToastrService);
   private route = inject(ActivatedRoute);
 
   constructor() {
     addIcons({
+      'alert-circle-outline': alertOutline,
       'search-outline': searchOutline,
       'checkmark-circle-outline': checkmarkCircleOutline,
       'log-in-outline': logInOutline,
@@ -128,12 +132,29 @@ export class BoardPage implements OnInit, AfterViewInit {
       },
       error: (err) => {
         console.error('Failed to load flight info', err);
-        this.showErrorToast('Failed to load flight information');
+        this.toastrService.error('Failed to load flight information');
       }
     });
   }
 
+  // Load all necessary data including flight status
   loadData() {
+    // Load flight status first to determine if closed
+    this.flightService.getFlightStatus(this.flightId).subscribe({
+      next: (status) => {
+        this.flightStatus = status;
+        // Then load all other data
+        this.loadAllBoardingData();
+      },
+      error: (err) => {
+        this.toastrService.error(this.getErrorMessage(err));
+        // Still try to load other data even if status fails
+        this.loadAllBoardingData();
+      }
+    });
+  }
+
+  private loadAllBoardingData() {
     this.loadCheckedInPassengers();
     this.loadBoardedPassengers();
     this.loadMissingSequences();
@@ -151,7 +172,7 @@ export class BoardPage implements OnInit, AfterViewInit {
       error: (err) => {
         console.error('Failed to load checked-in passengers', err);
         this.isLoading = false;
-        this.showErrorToast('Failed to load waiting passengers');
+        this.toastrService.error('Failed to load waiting passengers');
       }
     });
   }
@@ -164,7 +185,7 @@ export class BoardPage implements OnInit, AfterViewInit {
       },
       error: (err) => {
         console.error('Failed to load boarded passengers', err);
-        this.showErrorToast('Failed to load boarded passengers');
+        this.toastrService.error('Failed to load boarded passengers');
       }
     });
   }
@@ -201,6 +222,59 @@ export class BoardPage implements OnInit, AfterViewInit {
     return this.flightStatus === 'BOARDING_CLOSED' || this.flightStatus === 'DEPARTED';
   }
 
+  // --- UNDO BOARDING IMPROVED METHOD ---
+  async handleUndo(sequence: BoardingSequence) {
+    // Prevent action if flight is already closed (preventative UX)
+    if (this.isBoardingClosed) {
+      this.toastrService.error('Cannot undo boarding. The flight is already closed.');
+      return;
+    }
+
+    // Show confirmation dialog
+    const confirmed = await this.confirmationDialog.show(
+      'Confirm Undo',
+      `Are you sure you want to undo boarding for sequence #${sequence.sequenceNumber}?`,
+      'Cancel',
+      'Confirm'
+    );
+    
+    if (!confirmed) {
+      return;
+    }
+    
+    // Perform undo boarding
+    this.boardingService.undoBoarding(this.flightId, sequence.sequenceNumber).subscribe({
+      next: () => {
+        this.loadData(); // Reload data to reflect changes
+        this.toastrService.success(`Sequence #${sequence.sequenceNumber} moved back to waiting.`);
+      },
+      error: (err: HttpErrorResponse) => {
+        const errorMessage = this.getErrorMessage(err);
+        this.toastrService.error(errorMessage);
+      }
+    });
+  }
+
+  // Extract error message from HttpErrorResponse
+  private getErrorMessage(err: HttpErrorResponse): string {
+    if (err.status === 409) {
+      return err.error?.message || 'Cannot undo boarding. The flight is already closed.';
+    }
+    if (err.status === 400) {
+      return err.error?.message || 'Invalid request. Please check the data.';
+    }
+    if (err.status === 404) {
+      return 'Sequence or flight not found.';
+    }
+    if (err.status === 0) {
+      return 'Network error. Please check your internet connection.';
+    }
+    if (err.status >= 500) {
+      return 'Server error. Please try again later.';
+    }
+    return err.error?.message || 'An unexpected error occurred.';
+  }
+
   // --- CLOSE FLIGHT LOGIC ---
   async confirmCloseFlight() {
     const alert = await this.alertController.create({
@@ -221,8 +295,8 @@ export class BoardPage implements OnInit, AfterViewInit {
     await alert.present();
   }
 
-  private executeCloseFlight() {
-    const loading = this.showLoading('Closing flight...');
+  private async executeCloseFlight() {
+    const loading = await this.showLoading('Closing flight...');
     
     this.flightService.closeFlight(this.flightId).subscribe({
       next: async () => {
@@ -230,12 +304,12 @@ export class BoardPage implements OnInit, AfterViewInit {
         await this.loadFlightInfo();
         await this.loadData();
         
-        await (await loading).dismiss();
-        this.showSuccessToast('✓ Flight closed. No-shows finalized.');
+        await loading.dismiss();
+        this.toastrService.success('✓ Flight closed. No-shows finalized.');
       },
       error: async (err) => {
-        await (await loading).dismiss();
-        this.showErrorToast('Error closing flight: ' + err.message);
+        await loading.dismiss();
+        this.toastrService.error('Error closing flight: ' + err.message);
       }
     });
   }
@@ -264,12 +338,12 @@ export class BoardPage implements OnInit, AfterViewInit {
           
           await loading.dismiss();
           this.isDownloading = false;
-          this.showSuccessToast('Final manifest downloaded successfully!');
+          this.toastrService.success('Final manifest downloaded successfully!');
         },
         error: async (error) => {
           await loading.dismiss();
           this.isDownloading = false;
-          this.showErrorToast('Failed to download final manifest');
+          this.toastrService.error('Failed to download final manifest');
           console.error('Error downloading final manifest:', error);
         }
       });
@@ -302,12 +376,12 @@ export class BoardPage implements OnInit, AfterViewInit {
           
           await loading.dismiss();
           this.isDownloading = false;
-          this.showSuccessToast('Boarding report downloaded successfully!');
+          this.toastrService.success('Boarding report downloaded successfully!');
         },
         error: async (error) => {
           await loading.dismiss();
           this.isDownloading = false;
-          this.showErrorToast('Failed to download boarding report');
+          this.toastrService.error('Failed to download boarding report');
           console.error('Error downloading boarding report:', error);
         }
       });
@@ -339,7 +413,7 @@ export class BoardPage implements OnInit, AfterViewInit {
         },
         error: async (error) => {
           await loading.dismiss();
-          this.showErrorToast('Failed to generate preview');
+          this.toastrService.error('Failed to generate preview');
           console.error('Error previewing PDF:', error);
         }
       });
@@ -369,31 +443,7 @@ export class BoardPage implements OnInit, AfterViewInit {
     await alert.present();
   }
 
-  private showSuccessToast(message: string) {
-    this.toastMessage = message;
-    this.showToast = true;
-  }
-
-  private showErrorToast(message: string) {
-    this.toastMessage = message;
-    this.showToast = true;
-  }
-
-  // --- EXISTING METHODS ---
-
-  handleUndo(sequence: BoardingSequence) {
-    this.boardingService.undoBoarding(this.flightId, sequence.sequenceNumber).subscribe({
-      next: () => {
-        this.loadData();
-        this.toastMessage = `Sequence #${sequence.sequenceNumber} moved back to waiting.`;
-        this.showToast = true;
-      },
-      error: (err) => {
-        this.toastMessage = 'Error undoing boarding';
-        this.showToast = true;
-      }
-    });
-  }
+  // --- EXISTING METHODS (UPDATED WITH TOASTR SERVICE) ---
 
   onContentScroll(event: any) {
     const scrollTop = event.detail.scrollTop;
@@ -405,9 +455,8 @@ export class BoardPage implements OnInit, AfterViewInit {
     await this.content.scrollToTop(500);
     if (this.viewMode === 'waiting' && this.boardInput) {
       setTimeout(() => this.boardInput.setFocus(), 600);
-    } else if (this.viewMode === 'gaps' && this.gapInput) {
-      setTimeout(() => this.gapInput.setFocus(), 600);
     }
+    // Removed gapInput reference since it doesn't exist
   }
 
   async scrollToBottom() {
@@ -417,22 +466,24 @@ export class BoardPage implements OnInit, AfterViewInit {
 
   performBoarding(sequence: BoardingSequence) {
     if (sequence.status !== BoardingStatus.CHECKED_IN) {
-      this.toastMessage = `Sequence #${sequence.sequenceNumber} cannot be boarded (status: ${sequence.status})`;
-      this.showToast = true;
+      this.toastrService.error(`Sequence #${sequence.sequenceNumber} cannot be boarded (status: ${sequence.status})`);
+      return;
+    }
+
+    if (this.isBoardingClosed) {
+      this.toastrService.error('Cannot board passenger. The flight is already closed.');
       return;
     }
 
     this.boardingService.boardPassenger(this.flightId, sequence.sequenceNumber).subscribe({
       next: () => {
         this.loadData();
-        this.toastMessage = `✓ Sequence #${sequence.sequenceNumber} boarded!`;
-        this.showToast = true;
+        this.toastrService.success(`✓ Sequence #${sequence.sequenceNumber} boarded!`);
         this.searchQuery = '';
       },
       error: (err) => {
         console.error('Boarding failed', err);
-        this.toastMessage = `Failed to board sequence #${sequence.sequenceNumber}`;
-        this.showToast = true;
+        this.toastrService.error(`Failed to board sequence #${sequence.sequenceNumber}`);
       }
     });
   }
@@ -470,8 +521,12 @@ export class BoardPage implements OnInit, AfterViewInit {
 
     const sequenceNum = parseInt(this.searchQuery.trim());
     if (isNaN(sequenceNum)) {
-      this.toastMessage = 'Please enter a valid sequence number';
-      this.showToast = true;
+      this.toastrService.error('Please enter a valid sequence number');
+      return;
+    }
+
+    if (this.isBoardingClosed) {
+      this.toastrService.error('Cannot board passenger. The flight is already closed.');
       return;
     }
 
@@ -480,8 +535,7 @@ export class BoardPage implements OnInit, AfterViewInit {
     );
 
     if (!passenger) {
-      this.toastMessage = `Sequence #${sequenceNum} not found or already boarded`;
-      this.showToast = true;
+      this.toastrService.error(`Sequence #${sequenceNum} not found or already boarded`);
       return;
     }
 
@@ -498,17 +552,13 @@ export class BoardPage implements OnInit, AfterViewInit {
     } else if (this.viewMode === 'gaps') {
       this.gapSearchQuery = '';
       this.filteredMissingSequences = this.missingSequences;
-      if (this.gapInput) {
-        this.gapInput.setFocus();
-      }
     }
   }
 
   refreshData() {
     this.loadFlightInfo();
     this.loadData();
-    this.toastMessage = 'Refreshing data...';
-    this.showToast = true;
+    this.toastrService.info('Refreshing data...');
   }
 
   onSegmentChange(event: any) {

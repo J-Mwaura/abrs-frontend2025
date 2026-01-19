@@ -58,7 +58,8 @@ export class FlightService {
   }
 
   getFlightStatus(flightId: number): Observable<string> {
-    return this.http.get<string>(`${this.baseUrl}/${flightId}/status`);
+    return this.http.get<ApiResponse<string>>(`${this.baseUrl}/${flightId}/status`)
+      .pipe(map(res => this.unwrap(res)));
   }
 
   /**
