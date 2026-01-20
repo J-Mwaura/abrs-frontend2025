@@ -1,3 +1,3 @@
 [build]
   command = "ng build --output-path=www"
-  publish = "www/browse"
+  publish = "www/browser"
