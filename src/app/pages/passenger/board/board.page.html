@@ -145,11 +145,24 @@
   <div>
     <ion-card class="gap-stats-card">
       <ion-card-header>
-        <ion-card-title color="danger">
-          <ion-icon name="analytics-outline" slot="start"></ion-icon>
-          Gap Analysis
+        <ion-card-title color="danger" style="display: flex; align-items: center; justify-content: space-between;">
+
+          <div style="display: flex; align-items: center;">
+            <ion-icon name="analytics-outline" style="margin-right: 8px;"></ion-icon>
+            Gap Analysis
+          </div>
+
+          <div class="range-info">
+            @if (missingSequences.length > 1 && (maxMissing - minMissing + 1) === missingSequences.length) {
+            <ion-chip color="success" outline>
+              <ion-icon name="checkmark-circle-outline"></ion-icon>
+              <ion-label>Continuous range: #{{minMissing}}-#{{maxMissing}}</ion-label>
+            </ion-chip>
+            }
+          </div>
         </ion-card-title>
       </ion-card-header>
+
       <ion-card-content>
         <div class="gap-stats-row" style="display: flex; justify-content: space-between; margin-bottom: 15px;">
           <div class="gap-stat-item">
@@ -164,29 +177,6 @@
             <p style="margin: 0; font-size: 0.7rem;">TOTAL MISSING</p>
             <strong color="danger">{{missingSequences.length}}</strong>
           </div>
-        </div>
-
-        <div class="range-info">
-          @if (missingSequences.length > 1 && (maxMissing - minMissing + 1) === missingSequences.length) {
-          <ion-chip color="success" outline>
-            <ion-icon name="checkmark-circle-outline"></ion-icon>
-            <ion-label>Continuous range: #{{minMissing}}-#{{maxMissing}}</ion-label>
-          </ion-chip>
-          }
-
-          @if (missingSequences.length > 1 && (maxMissing - minMissing + 1) !== missingSequences.length) {
-          <ion-chip color="warning" outline>
-            <ion-icon name="alert-circle-outline"></ion-icon>
-            <ion-label>Scattered Gaps Detected</ion-label>
-          </ion-chip>
-          }
-
-          @if (missingSequences.length === 0) {
-          <ion-chip color="medium" outline>
-            <ion-icon name="checkmark-done-outline"></ion-icon>
-            <ion-label>No Missing Sequences</ion-label>
-          </ion-chip>
-          }
         </div>
       </ion-card-content>
     </ion-card>
@@ -213,15 +203,16 @@
         </ion-badge>
 
         <!-- Final Manifest Button -->
-        <ion-button expand="block" color="secondary" (click)="downloadReport('Final-Manifest')" [disabled]="isDownloading">
-              @if (isDownloading) {
-                <ion-spinner name="crescent" slot="start"></ion-spinner>
-              } @else {
-                <ion-icon name="download-outline" slot="start"></ion-icon>
-              }
-              Download Manifest
+        <ion-button expand="block" color="secondary" (click)="downloadReport('Final-Manifest')"
+          [disabled]="isDownloading">
+          @if (isDownloading) {
+          <ion-spinner name="crescent" slot="start"></ion-spinner>
+          } @else {
+          <ion-icon name="download-outline" slot="start"></ion-icon>
+          }
+          Download Manifest
         </ion-button>
-  
+
 
         <ion-button expand="block" color="medium" (click)="previewPdf()" [disabled]="isDownloading" fill="clear"
           style="margin-top: 8px;">
