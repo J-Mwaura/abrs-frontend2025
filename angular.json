@@ -35,8 +35,8 @@
               },
               {
                 "glob": "_redirects",
-                "input": "src",
-                "output": "/"
+                "input": "./",
+                "output": "./"
               },
               {
                 "glob": "**/*.svg",
