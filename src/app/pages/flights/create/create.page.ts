@@ -5,12 +5,13 @@ import {IonContent, IonList, IonItem, IonLabel, IonInput, IonButton, IonSpinner,
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FlightDto } from 'src/app/dtos/flight-dto';
+import { SharedHeaderComponent } from "src/app/component/shared-header/shared-header.component";
 @Component({
   selector: 'app-create-flight',
   templateUrl: './create.page.html',
   styleUrls: ['./create.page.scss'],
   standalone: true, // Required for your current architecture
-  imports: [IonBadge, 
+  imports: [IonBadge,
     RouterLink,
     IonListHeader,
     CommonModule,
@@ -18,8 +19,7 @@ import { FlightDto } from 'src/app/dtos/flight-dto';
     ReactiveFormsModule,
     IonContent,
     IonList, IonItem, IonLabel, IonInput,
-    IonButton, IonText, IonSpinner
-]
+    IonButton, IonText, IonSpinner, SharedHeaderComponent]
 })
 export class CreatePage implements OnInit {
   flightForm: FormGroup;

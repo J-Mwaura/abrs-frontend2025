@@ -83,7 +83,7 @@ export class AuthService {
     }
   }
 
-  private clearTokens() {
+  public clearTokens() {
     localStorage.removeItem(this.accessTokenKey);
     localStorage.removeItem(this.refreshTokenKey);
     localStorage.removeItem(this.rolesKey);

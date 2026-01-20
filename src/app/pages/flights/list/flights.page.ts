@@ -1,10 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import {
-  IonContent, IonHeader, IonTitle, IonToolbar, IonList, IonItem,
-  IonIcon, IonLabel, IonNote, IonBadge, IonButton, IonItemGroup, AlertController
-} from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonList, IonItem, IonIcon, IonLabel, IonNote, IonBadge, IonButton, IonItemGroup, AlertController, IonButtons, IonMenuButton } from '@ionic/angular/standalone';
 import { FlightService } from 'src/app/services/flight-service';
 import { Flight } from 'src/app/models/flight';
 import { NavController } from '@ionic/angular';
@@ -17,9 +14,9 @@ import { airplaneOutline, trashOutline, playOutline, eyeOutline } from 'ionicons
   templateUrl: './flights.page.html',
   styleUrls: ['./flights.page.scss'],
   standalone: true,
-  imports: [IonItemGroup, IonButton, IonBadge, IonNote, IonLabel,
+  imports: [IonButtons, IonItemGroup, IonButton, IonBadge, IonNote, IonLabel,
     IonIcon, IonItem, IonList, IonContent, IonHeader, IonTitle,
-    IonToolbar, CommonModule, FormsModule]
+    IonToolbar, CommonModule, FormsModule, IonMenuButton]
 })
 export class FlightsPage implements OnInit {
 

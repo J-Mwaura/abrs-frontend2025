@@ -106,10 +106,15 @@ https://www.flaticon.com/
 # Generating apk
 
 ionic build
-ionic cap copy
-ionic cap sync
 ionic cap open android
 
-View on android studio
+# View on android studio
 
 ionic cap open android
+
+# Sync after making changes to Angular code
+
+ionic build
+npx cap copy
+npx cap sync
+
