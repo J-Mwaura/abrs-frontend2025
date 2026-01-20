@@ -1,0 +1,6 @@
+[build]
+  command = "ng build --output-path=www"
+  publish = "www"
+
+[[plugins]]
+  package = "@netlify/angular-runtime"
