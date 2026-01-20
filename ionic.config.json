@@ -3,6 +3,7 @@
   "integrations": {
     "capacitor": {}
   },
-  "type": "angular-standalone",
-  "id": "147287e1"
+  "type": "angular",
+  "root": ".",
+  "webDir": "www"
 }
