@@ -315,82 +315,39 @@ export class BoardPage implements OnInit, AfterViewInit {
   }
 
   // --- PDF REPORT DOWNLOAD METHODS ---
-
-  async downloadPdf() {
-    if (!this.isBoardingClosed) {
-      await this.showBoardingNotClosedAlert();
-      return;
-    }
-
-    const loading = await this.loadingController.create({
-      message: 'Generating Final Manifest...',
-      spinner: 'crescent'
-    });
-    
-    await loading.present();
-    this.isDownloading = true;
-
-    try {
-      this.reportService.downloadBoardingReport(this.flightId).subscribe({
-        next: async (blob: Blob) => {
-          const filename = `Final-Manifest-${this.flightNumber}-${new Date().toISOString().split('T')[0]}.pdf`;
-          this.reportService.saveAsPdf(blob, filename);
-          
-          await loading.dismiss();
-          this.isDownloading = false;
-          this.toastrService.success('Final manifest downloaded successfully!');
-        },
-        error: async (error) => {
-          await loading.dismiss();
-          this.isDownloading = false;
-          this.toastrService.error('Failed to download final manifest');
-          console.error('Error downloading final manifest:', error);
-        }
-      });
-    } catch (error) {
-      await loading.dismiss();
-      this.isDownloading = false;
-      console.error('Error in download process:', error);
-    }
+  async downloadReport(type: 'Final-Manifest' | 'Boarding-Report') {
+  if (!this.isBoardingClosed) {
+    await this.showBoardingNotClosedAlert();
+    return;
   }
 
-  async downloadBoardingReport() {
-    if (!this.isBoardingClosed) {
-      await this.showBoardingNotClosedAlert();
-      return;
-    }
+  const label = type.replace('-', ' '); // Turns 'Final-Manifest' into 'Final Manifest'
+  const loading = await this.loadingController.create({
+    message: `Generating ${label}...`,
+    spinner: 'crescent'
+  });
+  
+  await loading.present();
+  this.isDownloading = true;
 
-    const loading = await this.loadingController.create({
-      message: 'Generating Boarding Report...',
-      spinner: 'crescent'
-    });
-    
-    await loading.present();
-    this.isDownloading = true;
-
-    try {
-      this.reportService.downloadBoardingReport(this.flightId).subscribe({
-        next: async (blob: Blob) => {
-          const filename = `Boarding-Report-${this.flightNumber}-${new Date().toISOString().split('T')[0]}.pdf`;
-          this.reportService.saveAsPdf(blob, filename);
-          
-          await loading.dismiss();
-          this.isDownloading = false;
-          this.toastrService.success('Boarding report downloaded successfully!');
-        },
-        error: async (error) => {
-          await loading.dismiss();
-          this.isDownloading = false;
-          this.toastrService.error('Failed to download boarding report');
-          console.error('Error downloading boarding report:', error);
-        }
-      });
-    } catch (error) {
+  this.reportService.downloadBoardingReport(this.flightId).subscribe({
+    next: async (blob: Blob) => {
+      const dateStr = new Date().toISOString().split('T')[0];
+      const filename = `${type}-${this.flightNumber}-${dateStr}.pdf`;
+      
+      this.reportService.saveAsPdf(blob, filename);
+      
       await loading.dismiss();
       this.isDownloading = false;
-      console.error('Error in download process:', error);
+      this.toastrService.success(`${label} downloaded successfully!`);
+    },
+    error: async (error) => {
+      await loading.dismiss();
+      this.isDownloading = false;
+      this.toastrService.error(`Failed to download ${label.toLowerCase()}`);
     }
-  }
+  });
+}
 
   async previewPdf() {
     if (!this.isBoardingClosed) {

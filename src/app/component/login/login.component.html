@@ -1,0 +1,27 @@
+<div class="login-container">
+  <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+  <!-- Password login form -->
+  <form [formGroup]="passwordForm" (ngSubmit)="onPasswordLogin()">
+    <label for="username">Username</label>
+    <input id="username" formControlName="username" type="text" />
+
+    <label for="password">Password</label>
+    <input id="password" formControlName="password" type="password" />
+
+    <button type="submit">Login</button>
+  </form>
+
+  <hr />
+
+  <!-- PIN login form -->
+  <form [formGroup]="pinForm" (ngSubmit)="onPinLogin()">
+    <label for="phone">Phone</label>
+    <input id="phone" formControlName="phone" type="text" />
+
+    <label for="pin">PIN</label>
+    <input id="pin" formControlName="pin" type="password" />
+
+    <button type="submit">Login with PIN</button>
+  </form>
+</div>

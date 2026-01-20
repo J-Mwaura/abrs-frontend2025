@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { AuthGuard } from './guards/auth-guard';
 
 export const routes: Routes = [
   {
@@ -7,11 +8,18 @@ export const routes: Routes = [
     pathMatch: 'full',
   },
   {
-    path: 'tabs',
-    loadChildren: () => import('./tabs/tabs.routes').then((m) => m.routes),
+    path: 'login',
+    loadComponent: () =>
+      import('./component/login/login.component').then(m => m.LoginComponent)
   },
   {
-    path: 'board',
-    loadComponent: () => import('./pages/passenger/board/board.page').then( m => m.BoardPage)
+    path: 'tabs',
+    loadChildren: () =>
+      import('./tabs/tabs.routes').then(m => m.routes),
+    canActivate: [AuthGuard] // 🔐 protect all tabs
+  },
+  {
+    path: '**',
+    redirectTo: 'login'
   }
 ];

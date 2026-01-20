@@ -1,11 +1,16 @@
 import { Routes } from '@angular/router';
 import { TabsPage } from './tabs.page';
-
+import { AuthGuard } from '../guards/auth-guard';
 export const routes: Routes = [
   {
-    path: '', 
+    path: '',
     component: TabsPage,
+    canActivate: [AuthGuard], // 🔑 Protect TabsPage and children
     children: [
+      {
+        path: 'login', 
+        loadComponent: () => import('../component/login/login.component').then(m => m.LoginComponent)
+      },
       {
         path: 'flights',
         loadComponent: () => import('../pages/flights/list/flights.page').then(m => m.FlightsPage)
@@ -14,10 +19,9 @@ export const routes: Routes = [
         path: 'create',
         loadComponent: () => import('../pages/flights/create/create.page').then(m => m.CreatePage)
       },
-      // 🔑 Added Boarding Route with ID parameter
       {
         path: 'board/:id',
-        loadComponent: () => import('../pages/passenger/board/board.page').then( m => m.BoardPage)
+        loadComponent: () => import('../pages/passenger/board/board.page').then(m => m.BoardPage)
       },
       {
         path: 'flight-detail/:id',
@@ -29,5 +33,13 @@ export const routes: Routes = [
         pathMatch: 'full',
       },
     ],
+  },
+  {
+    path: 'login',
+    loadComponent: () => import('../component/login/login.component').then(m => m.LoginComponent)
+  },
+  {
+    path: '**',
+    redirectTo: 'login'
   }
 ];
