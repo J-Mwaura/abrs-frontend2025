@@ -1,13 +1,7 @@
 import { AfterViewInit, Component, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import {
-  IonContent, IonHeader, IonTitle, IonToolbar, IonList, IonItem,
-  IonIcon, IonLabel, IonButton, IonBadge, IonSpinner,
-  IonSearchbar, IonListHeader, IonToast, IonFab, IonFabButton,
-  IonCard, IonCardContent, IonCardHeader, IonCardTitle,
-  IonSegment, IonItemOptions, IonItemOption, IonItemSliding, IonSegmentButton,
-  IonChip, AlertController, LoadingController, IonButtons, IonBackButton } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonList, IonItem, IonIcon, IonLabel, IonButton, IonBadge, IonSpinner, IonSearchbar, IonListHeader, IonToast, IonFab, IonFabButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonSegment, IonItemOptions, IonItemOption, IonItemSliding, IonSegmentButton, IonChip, AlertController, LoadingController, IonButtons, IonBackButton, IonMenuButton } from '@ionic/angular/standalone';
 import { ActivatedRoute } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
@@ -37,7 +31,7 @@ import { ToastrService } from 'src/app/services/toast-service';
     IonCardContent, IonCard, IonCardHeader, IonCardTitle, IonBadge, IonChip,
     IonListHeader, IonSearchbar, IonFab, IonFabButton,
     IonLabel, IonIcon, IonItem, IonList, IonContent, IonHeader,
-    IonTitle, IonToolbar, CommonModule, FormsModule, IonButton]
+    IonTitle, IonToolbar, CommonModule, FormsModule, IonButton, IonMenuButton]
 })
 export class BoardPage implements OnInit, AfterViewInit {
 

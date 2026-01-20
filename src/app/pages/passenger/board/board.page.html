@@ -1,6 +1,9 @@
-<ion-header [translucent]="true">
+ <ion-header [translucent]="true">
   <ion-toolbar color="primary">
-    <ion-title>✈️ Boarding - Flight {{flightNumber}}</ion-title>
+    <ion-buttons slot="start">
+      <ion-menu-button menu="main-menu"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>✈️ Flight {{flightNumber}} Boarding</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="refreshData()">
         <ion-icon name="refresh-outline"></ion-icon>

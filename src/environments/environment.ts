@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,
-  //  apiUrl: 'http://localhost:8080/',
-  apiUrl: 'https://revenue-backend-bf7e5e6a786a.herokuapp.com/'
+    apiUrl: 'http://localhost:8080/',
+  // apiUrl: 'https://revenue-backend-bf7e5e6a786a.herokuapp.com/'
 };
 
 /*
