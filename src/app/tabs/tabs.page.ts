@@ -1,5 +1,5 @@
 import { Component, EnvironmentInjector, inject, OnInit } from '@angular/core';
-import { IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel, IonItem, IonToggle } from '@ionic/angular/standalone';
+import { IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { triangle, ellipse, square, settingsOutline, airplaneOutline, settings, trashOutline, people } from 'ionicons/icons';
 import { AuthService } from '../security/services/auth-service';

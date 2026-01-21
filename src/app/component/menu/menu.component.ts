@@ -1,8 +1,25 @@
+// menu.component.ts
 import { Component, inject } from '@angular/core';
 import { AuthService } from 'src/app/security/services/auth-service';
 import { Router } from '@angular/router';
-import { IonMenu, IonContent, IonList, IonItem, IonLabel, IonButton, IonIcon, IonRouterOutlet } from '@ionic/angular/standalone';
-import { logOutOutline, logInOutline, airplaneOutline, settingsOutline, peopleOutline } from 'ionicons/icons';
+import { 
+  IonMenu, 
+  IonContent, 
+  IonList, 
+  IonItem, 
+  IonLabel, 
+  IonIcon, 
+  IonRouterOutlet ,
+  IonMenuToggle,
+  MenuController 
+} from '@ionic/angular/standalone';
+import { 
+  logOutOutline, 
+  logInOutline, 
+  airplaneOutline, 
+  settingsOutline, 
+  peopleOutline 
+} from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import { CommonModule } from '@angular/common';
 
@@ -11,11 +28,23 @@ import { CommonModule } from '@angular/common';
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.scss'],
   standalone: true,
-  imports: [IonRouterOutlet, IonMenu, IonContent, IonList, IonItem, IonLabel, IonIcon, CommonModule]
+  imports: [
+    IonRouterOutlet,
+    IonMenu, 
+    IonContent, 
+    IonList, 
+    IonItem, 
+    IonLabel, 
+    IonIcon, 
+    CommonModule, 
+    IonMenuToggle,
+
+  ]
 })
 export class MenuComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
+  private menuController = inject(MenuController);
 
   constructor() {
     addIcons({
@@ -31,16 +60,25 @@ export class MenuComponent {
     return this.authService.isLoggedIn();
   }
 
-  logout() {
+  async logout() {
     this.authService.logout().subscribe({
-      next: (res) => {
+      next: async (res) => {
         console.log(res.message || 'Logged out successfully');
+        await this.menuController.close(); // Close menu after logout
         this.router.navigate(['/login']);
       },
-      error: (err) => {
+      error: async (err) => {
         console.error('Logout failed', err);
+        await this.menuController.close(); // Close menu even on error
         this.router.navigate(['/login']);
       }
+    });
+  }
+
+  async goToTab(tab: string) {
+    await this.menuController.close(); // Close menu after navigation
+    this.router.navigate(['/tabs', tab], {
+      replaceUrl: true
     });
   }
 }

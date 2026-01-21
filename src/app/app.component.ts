@@ -1,17 +1,6 @@
-import { Component, inject } from '@angular/core';
-import { AuthService } from './security/services/auth-service';
-import { Router } from '@angular/router';
+import { Component } from '@angular/core';
 import {
-  IonApp,
-  IonContent,
-  IonHeader,
-  IonTitle,
-  IonToolbar,
-  IonList,
-  IonItem,
-  IonIcon,
-  IonLabel,
-  IonMenu, IonRouterOutlet } from '@ionic/angular/standalone';
+  IonApp } from '@ionic/angular/standalone';
 import { MenuComponent } from './component/menu/menu.component';
 
 @Component({
@@ -21,7 +10,8 @@ import { MenuComponent } from './component/menu/menu.component';
    standalone: true,
   imports: [
     MenuComponent,
-    IonApp]
+    IonApp
+]
 })
 export class AppComponent {
 
