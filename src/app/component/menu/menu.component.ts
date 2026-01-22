@@ -2,23 +2,21 @@
 import { Component, inject } from '@angular/core';
 import { AuthService } from 'src/app/security/services/auth-service';
 import { Router } from '@angular/router';
-import { 
-  IonMenu, 
-  IonContent, 
-  IonList, 
-  IonItem, 
-  IonLabel, 
-  IonIcon, 
-  IonRouterOutlet ,
-  IonMenuToggle,
-  MenuController 
+import {
+  IonMenu,
+  IonContent,
+  IonList,
+  IonItem,
+  IonLabel,
+  IonIcon,
+  MenuController
 } from '@ionic/angular/standalone';
-import { 
-  logOutOutline, 
-  logInOutline, 
-  airplaneOutline, 
-  settingsOutline, 
-  peopleOutline 
+import {
+  logOutOutline,
+  logInOutline,
+  airplaneOutline,
+  settingsOutline,
+  peopleOutline
 } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import { CommonModule } from '@angular/common';
@@ -29,16 +27,13 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./menu.component.scss'],
   standalone: true,
   imports: [
-    IonRouterOutlet,
-    IonMenu, 
-    IonContent, 
-    IonList, 
-    IonItem, 
-    IonLabel, 
-    IonIcon, 
-    CommonModule, 
-    IonMenuToggle,
-
+    IonMenu,
+    IonContent,
+    IonList,
+    IonItem,
+    IonLabel,
+    IonIcon,
+    CommonModule
   ]
 })
 export class MenuComponent {
@@ -76,8 +71,8 @@ export class MenuComponent {
   }
 
   async goToTab(tab: string) {
-    await this.menuController.close(); // Close menu after navigation
-    this.router.navigate(['/tabs', tab], {
+    await this.menuController.close();
+    this.router.navigateByUrl(`/tabs/${tab}`, {
       replaceUrl: true
     });
   }

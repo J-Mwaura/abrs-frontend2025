@@ -1,20 +1,29 @@
 import { Component } from '@angular/core';
 import {
-  IonApp } from '@ionic/angular/standalone';
+  IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 import { MenuComponent } from './component/menu/menu.component';
+import { addIcons } from 'ionicons';
+import { airplane, addCircleOutline, airplaneOutline, settings, trashOutline, people } from 'ionicons/icons';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
    standalone: true,
-  imports: [
+  imports: [IonRouterOutlet, 
     MenuComponent,
     IonApp
 ]
 })
 export class AppComponent {
 
-  constructor() {}
+  constructor() {addIcons({ 
+  airplane,              // Matches name="airplane"
+  'add-circle-outline': addCircleOutline, // Matches name="add-circle-outline"
+  airplaneOutline,
+  settings,
+  trashOutline,
+  people
+});}
   
 }

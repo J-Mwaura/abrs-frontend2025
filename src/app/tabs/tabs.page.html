@@ -1,16 +1,15 @@
 @if (isLoggedIn()) {
   <ion-tabs>
     <ion-tab-bar slot="bottom">
-      <ion-tab-button tab="flights" href="/tabs/flights">
+      <ion-tab-button tab="flights" [routerLink]="['/tabs/flights']">
         <ion-icon name="airplane"></ion-icon>
         <ion-label>Flights</ion-label>
       </ion-tab-button>
 
-      <ion-tab-button tab="create" href="/tabs/create">
+      <ion-tab-button tab="create" [routerLink]="['/tabs/create']">
         <ion-icon name="add-circle-outline"></ion-icon>
         <ion-label>New Flight</ion-label>
       </ion-tab-button>
     </ion-tab-bar>
-
   </ion-tabs>
 }

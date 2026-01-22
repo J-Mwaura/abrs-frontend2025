@@ -4,12 +4,13 @@ import { addIcons } from 'ionicons';
 import { triangle, ellipse, square, settingsOutline, airplaneOutline, settings, trashOutline, people } from 'ionicons/icons';
 import { AuthService } from '../security/services/auth-service';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-tabs',
   templateUrl: 'tabs.page.html',
   styleUrls: ['tabs.page.scss'],
-  imports: [IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel, CommonModule],
+  imports: [ RouterModule, IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel, CommonModule],
 })
 export class TabsPage implements OnInit {
   public environmentInjector = inject(EnvironmentInjector);
