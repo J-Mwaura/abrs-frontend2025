@@ -41,16 +41,16 @@ export class FlightsPage implements OnInit {
   flights: Flight[] = [];
 
   ionViewWillEnter() {
+    this.loadFlights();
+  }
+
+  // Helper method to keep things clean
+  loadFlights() {
     this.flightService.getFlights().subscribe({
       next: (flights) => {
-        // 'flights' is now the raw Flight[] array
         this.flights = flights || [];
       },
-      error: (err) => {
-        // The unwrap helper throws the backend 'message' here
-        console.error('Error fetching flights:', err.message);
-        // Optional: Show an Ionic Alert or Toast to the user here
-      }
+      error: (err) => console.error('Error fetching flights:', err.message)
     });
   }
 
@@ -108,12 +108,19 @@ export class FlightsPage implements OnInit {
   private executeDelete(flightId: number) {
     this.flightService.deleteFlight(flightId).subscribe({
       next: (response) => {
+        // 1. Show the success message using your ToastrService
         this.toast.success(response.message || 'Flight removed successfully');
-        // If you are already on the list page, you might just want to refresh:
-        this.ionViewWillEnter();
+
+        // 2. INSTANT UI UPDATE: Remove the flight from the local list
+        // This is much faster than re-fetching everything from the server
+        this.flights = this.flights.filter(f => f.id !== flightId);
       },
       error: (err) => {
-        const errorMessage = err.error?.message || 'Failed to delete flight';
+        // Handle the 409 Conflict error specifically if it happens
+        const errorMessage = err.status === 409
+          ? 'Cannot delete: This flight has active boarding records.'
+          : (err.error?.message || 'Failed to delete flight');
+
         this.toast.error(errorMessage);
       }
     });

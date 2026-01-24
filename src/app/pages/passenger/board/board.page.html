@@ -228,31 +228,29 @@
 
     <!-- Missing Sequences List -->
     <ion-list class="gaps-list">
-      <ion-list-header>
-        <ion-label>Missing Sequences ({{filteredMissingSequences.length}})</ion-label>
-      </ion-list-header>
+  <ion-list-header>
+    <ion-label>Missing Sequences ({{filteredMissingSequences.length}})</ion-label>
+  </ion-list-header>
 
-      @for (seq of filteredMissingSequences; track seq) {
-      <ion-item button detail="true">
-        <ion-icon slot="start" name="alert-outline" color="danger"></ion-icon>
-        <ion-label>
-          <h2>Sequence #{{seq}}</h2>
-          <p>Not boarded</p>
-        </ion-label>
-        <ion-badge slot="end" color="danger">MISSING</ion-badge>
-      </ion-item>
-      }
+  @for (seq of filteredMissingSequences; track seq) {
+  <ion-item-sliding>
+    <ion-item button detail="true" (click)="presentNoteAlert(seq)">
+      <ion-icon slot="start" name="alert-outline" color="danger"></ion-icon>
+      <ion-label>
+        <h2>Sequence #{{seq}}</h2>
+        <p>Tap to add note or swipe left</p>
+      </ion-label>
+      <ion-badge slot="end" color="danger">MISSING</ion-badge>
+    </ion-item>
 
-      @if (missingSequences.length === 0) {
-      <ion-item class="ion-text-center">
-        <ion-label color="medium">
-          <ion-icon name="checkmark-done-outline" size="large"></ion-icon>
-          <h3>No Missing Sequences</h3>
-          <p>All passengers have checked in or boarded</p>
-        </ion-label>
-      </ion-item>
-      }
-    </ion-list>
+    <ion-item-options side="end">
+      <ion-item-option color="primary" (click)="presentNoteAlert(seq)">
+        <ion-icon slot="icon-only" name="document-text-outline"></ion-icon>
+      </ion-item-option>
+    </ion-item-options>
+  </ion-item-sliding>
+  }
+  </ion-list>
   </div>
   }
 

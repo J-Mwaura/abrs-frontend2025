@@ -522,4 +522,48 @@ export class BoardPage implements OnInit, AfterViewInit {
       this.filteredMissingSequences = this.missingSequences;
     }
   }
+
+  // Inside your FlightsPage or BoardingBoardPage class
+
+async presentNoteAlert(sequenceNumber: number) {
+  const alert = await this.alertController.create({
+    header: 'Add Boarding Note',
+    subHeader: `Sequence #${sequenceNumber}`,
+    message: 'Adding a note will be recorded in the audit trail.',
+    inputs: [
+      {
+        name: 'note',
+        type: 'textarea',
+        placeholder: 'e.g., Offloaded due to no-show at gate...',
+      }
+    ],
+    buttons: [
+      { text: 'Cancel', role: 'cancel' },
+      {
+        text: 'Save Note',
+        handler: (data) => {
+          if (data.note && data.note.trim().length > 0) {
+            this.executeAddNote(sequenceNumber, data.note);
+          }
+        }
+      }
+    ]
+  });
+
+  await alert.present();
+}
+
+private executeAddNote(sequenceNumber: number, note: string) {
+  // Use the flightId available in your component (e.g., from the route)
+  this.boardingService.addPassengerNote(this.flightId, sequenceNumber, note).subscribe({
+    next: () => {
+      // Refresh data to show updated stats/events if necessary
+      this.refreshData(); 
+      this.toastrService.success(`Note saved for Sequence #${sequenceNumber}`);  
+    },
+    error: (err) => {
+      this.toastrService.error(err.message || 'Failed to save note');
+    }
+  });
+}
 }
