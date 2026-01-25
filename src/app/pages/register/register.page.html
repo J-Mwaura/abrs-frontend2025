@@ -1,0 +1,74 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button menu="main-menu"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Register New Staff</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="register-container">
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <ion-list lines="full">
+        
+        <ion-item>
+          <ion-label position="stacked">First Name</ion-label>
+          <ion-input formControlName="firstName" type="text" placeholder="Enter first name"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Last Name</ion-label>
+          <ion-input formControlName="lastName" type="text" placeholder="Enter last name"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Username</ion-label>
+          <ion-input formControlName="username" type="text" placeholder="Choose a unique username"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Email</ion-label>
+          <ion-input formControlName="email" type="email" placeholder="staff@company.com"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Phone Number</ion-label>
+          <ion-input formControlName="phone" type="tel" placeholder="Enter phone number"></ion-input>
+        </ion-item>
+
+        <!-- <ion-item>
+          <ion-label position="stacked">Staff Role</ion-label>
+          <ion-select formControlName="staffType" interface="popover">
+            @for (type of staffOptions; track type) {
+              <ion-select-option [value]="type">{{ type }}</ion-select-option>
+            }
+          </ion-select>
+        </ion-item> -->
+
+        <ion-item>
+          <ion-label position="stacked">Password</ion-label>
+          <ion-input formControlName="password" type="password" placeholder="Min 6 characters"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Security PIN</ion-label>
+          <ion-input 
+            formControlName="pin" 
+            type="password" 
+            inputmode="numeric" 
+            placeholder="4-6 digit numeric PIN">
+          </ion-input>
+        </ion-item>
+
+      </ion-list>
+
+      <div class="ion-padding-top">
+        <ion-button expand="block" type="submit" [disabled]="isLoading || registerForm.invalid">
+          <span *ngIf="!isLoading">Register Staff</span>
+          <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+        </ion-button>
+      </div>
+    </form>
+  </div>
+</ion-content>

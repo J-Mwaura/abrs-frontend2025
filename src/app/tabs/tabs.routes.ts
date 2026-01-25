@@ -8,10 +8,6 @@ export const routes: Routes = [
     canActivate: [AuthGuard], // 🔑 Protect TabsPage and children
     children: [
       {
-        path: 'login', 
-        loadComponent: () => import('../component/login/login.component').then(m => m.LoginComponent)
-      },
-      {
         path: 'flights',
         loadComponent: () => import('../pages/flights/list/flights.page').then(m => m.FlightsPage)
       },
@@ -26,6 +22,10 @@ export const routes: Routes = [
       {
         path: 'flight-detail/:id',
         loadComponent: () => import('../pages/flights/flight-detail/flight-detail.page').then(m => m.FlightDetailPage)
+      },
+      {
+        path: 'register',
+        loadComponent: () => import('../pages/register/register.page').then(m => m.RegisterPage)
       },
       {
         path: '',

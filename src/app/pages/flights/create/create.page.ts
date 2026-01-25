@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { FlightService } from 'src/app/services/flight-service';
 import {IonContent, IonList, IonItem, IonLabel, IonInput, IonButton, IonSpinner, IonText, IonListHeader, IonBadge } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
 import { FlightDto } from 'src/app/dtos/flight-dto';
 import { SharedHeaderComponent } from "src/app/component/shared-header/shared-header.component";
 @Component({
@@ -12,7 +11,6 @@ import { SharedHeaderComponent } from "src/app/component/shared-header/shared-he
   styleUrls: ['./create.page.scss'],
   standalone: true, // Required for your current architecture
   imports: [IonBadge,
-    RouterLink,
     IonListHeader,
     CommonModule,
     FormsModule,

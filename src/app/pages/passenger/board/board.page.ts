@@ -44,6 +44,9 @@ export class BoardPage implements OnInit, AfterViewInit {
   flightNumber: string = '';
   searchQuery: string = '';
   gapSearchQuery: string = '';
+
+  boardedSearchQuery: string = '';
+filteredBoarded: BoardingSequence[] = [];
   
   // Track flight state
   flightStatus: string = ''; 
@@ -172,17 +175,41 @@ export class BoardPage implements OnInit, AfterViewInit {
   }
 
   loadBoardedPassengers() {
-    this.boardingService.getBoardedPassengers(this.flightId).subscribe({
-      next: (passengers) => {
-        this.allBoarded = passengers || [];
-        this.stats.totalBoarded = this.allBoarded.length;
-      },
-      error: (err) => {
-        console.error('Failed to load boarded passengers', err);
-        this.toastrService.error('Failed to load boarded passengers');
-      }
-    });
+  this.boardingService.getBoardedPassengers(this.flightId).subscribe({
+    next: (passengers) => {
+      this.allBoarded = passengers || [];
+      
+      // We manually trigger the search logic using the existing query
+      // so the UI stays consistent with what the user typed.
+      this.handleBoardedSearch({ target: { value: this.boardedSearchQuery } });
+      
+      this.stats.totalBoarded = this.allBoarded.length;
+    },
+    error: (err) => {
+      console.error('Failed to load boarded passengers', err);
+      this.toastrService.error('Failed to load boarded passengers');
+    }
+  });
+}
+
+handleBoardedSearch(event: any) {
+  const query = event.target.value ? event.target.value.toLowerCase().trim() : '';
+  this.boardedSearchQuery = query;
+
+  if (!query) {
+    this.filteredBoarded = [...this.allBoarded];
+    return;
   }
+
+  this.filteredBoarded = this.allBoarded.filter(p =>
+    p.sequenceNumber.toString().includes(query)
+  );
+}
+
+clearBoardedSearch() {
+  this.boardedSearchQuery = '';
+  this.filteredBoarded = [...this.allBoarded];
+}
 
   loadMissingSequences() {
     this.boardingService.getMissingPassengers(this.flightId).subscribe({
@@ -526,7 +553,9 @@ export class BoardPage implements OnInit, AfterViewInit {
     this.viewMode = event.detail.value;
     if (this.viewMode === 'waiting') {
       this.searchQuery = '';
+      this.boardedSearchQuery = '';
       this.filteredSequences = this.allCheckedIn;
+      this.filteredBoarded = [...this.allBoarded];
     } else if (this.viewMode === 'gaps') {
       this.gapSearchQuery = '';
       this.filteredMissingSequences = this.missingSequences;

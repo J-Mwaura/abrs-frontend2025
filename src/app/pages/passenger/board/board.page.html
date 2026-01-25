@@ -26,6 +26,7 @@
 </ion-header>
 
 <ion-content class="ion-padding" scrollEvents="true" (ionScroll)="onContentScroll($event)">
+  
   <!-- Boarding Closed Warning -->
   @if (isBoardingClosed) {
   <ion-card color="warning">
@@ -111,42 +112,56 @@
 
   <!-- Boarded View -->
   @if (viewMode === 'boarded') {
-  <div>
-    <ion-list class="boarded-list">
-      <ion-list-header>
+<div>
+  <ion-card class="search-card">
+    <ion-card-content>
+      <ion-searchbar 
+        [(ngModel)]="boardedSearchQuery" 
+        (ionInput)="handleBoardedSearch($event)"
+        (ionClear)="clearBoardedSearch()"
+        show-clear-button="always"
+        placeholder="Search boarded sequences...">
+      </ion-searchbar>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-list class="boarded-list">
+    <ion-list-header>
+      <ion-label>
+        <h2>Boarded List ({{filteredBoarded.length}})</h2>
+        <p>Swipe left to undo boarding</p>
+      </ion-label>
+    </ion-list-header>
+
+    @for (p of filteredBoarded; track p.sequenceNumber) {
+    <ion-item-sliding>
+      <ion-item>
+        <ion-icon slot="start" name="checkmark-circle-outline" color="success"></ion-icon>
         <ion-label>
-          <h2>Boarded List</h2>
-          <p>Swipe left to undo boarding</p>
+          <h2>Sequence #{{p.sequenceNumber}}</h2>
+          <p>Boarded successfully</p>
         </ion-label>
-      </ion-list-header>
-
-      @for (p of allBoarded; track p.sequenceNumber) {
-      <ion-item-sliding>
-        <ion-item>
-          <ion-icon slot="start" name="checkmark-circle-outline" color="success"></ion-icon>
-          <ion-label>
-            <h2>Sequence #{{p.sequenceNumber}}</h2>
-            <p>Boarded successfully</p>
-          </ion-label>
-        </ion-item>
-
-        <ion-item-options side="end">
-          <ion-item-option color="warning" expandable [disabled]="isBoardingClosed" (click)="handleUndo(p)">
-            <ion-icon slot="icon-only" name="arrow-undo-outline"></ion-icon>
-            Undo
-          </ion-item-option>
-        </ion-item-options>
-      </ion-item-sliding>
-      }
-
-      @if (allBoarded.length === 0) {
-      <ion-item class="ion-text-center">
-        <ion-label color="medium">No passengers boarded yet</ion-label>
       </ion-item>
-      }
-    </ion-list>
-  </div>
-  }
+
+      <ion-item-options side="end">
+        <ion-item-option color="warning" expandable [disabled]="isBoardingClosed" (click)="handleUndo(p)">
+          <ion-icon slot="icon-only" name="arrow-undo-outline"></ion-icon>
+          Undo
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+    }
+
+    @if (filteredBoarded.length === 0) {
+    <ion-item class="ion-text-center">
+      <ion-label color="medium">
+        {{ boardedSearchQuery ? 'No matches found' : 'No passengers boarded yet' }}
+      </ion-label>
+    </ion-item>
+    }
+  </ion-list>
+</div>
+}
 
   <!-- Gaps View -->
   @if (viewMode === 'gaps') {

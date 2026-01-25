@@ -19,6 +19,11 @@
         <ion-label>Login</ion-label>
       </ion-item>
 
+      <ion-item *ngIf="isLoggedIn()" (click)="goToTab('register')">
+        <ion-icon slot="start" name="person-add-outline"></ion-icon>
+        <ion-label>Register</ion-label>
+      </ion-item>
+
       <ion-item *ngIf="isLoggedIn()" button (click)="logout()">
         <ion-icon slot="start" name="log-out-outline"></ion-icon>
         <ion-label>Logout</ion-label>

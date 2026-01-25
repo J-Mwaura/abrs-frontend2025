@@ -439,6 +439,16 @@ ion-toast {
     padding-bottom: 8px;
   }
 
+  ion-searchbar {
+    padding-top: 0;
+    padding-bottom: 0;
+    --height: 44px; // Standard compact height
+  }
+
+  ion-card-content {
+    padding: 0; 
+  }
+
   .button-group {
     padding-top: 8px;
 

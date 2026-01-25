@@ -55,7 +55,7 @@
     </ion-list-header>
     <ion-list>
       @for (f of recentFlights; track f.flightNumber) {
-        <ion-item [routerLink]="['/check-in', f.id]">
+        <ion-item>
           <ion-label>
             <h2>{{ f.flightNumber }}</h2>
             <p>Operational Date: {{ f.flightDate }}</p> <p>Status: <ion-badge color="primary">{{ f.status }}</ion-badge></p>

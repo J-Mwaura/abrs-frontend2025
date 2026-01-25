@@ -6,6 +6,8 @@ import { PasswordLoginRequest } from 'src/app/dtos/security/password-login-reque
 import { PinLoginRequest } from 'src/app/dtos/security/pin-login-request';
 import { JwtResponse } from 'src/app/dtos/security/response/JwtResponse ';
 import { environment } from 'src/environments/environment';
+import { RegistrationRequest } from 'src/app/dtos/security/registration-request';
+import { ApiResponse } from 'src/app/dtos/reponse/api-response';
 
 @Injectable({
   providedIn: 'root',
@@ -33,14 +35,18 @@ export class AuthService {
   // ----------------------
   // PIN login
   // ----------------------
-  loginWithPin(request: PinLoginRequest): Observable<JwtResponse> {
-    return this.http.post<JwtResponse>(
-      `${this.baseUrl}/login/pin`,
-      request
-    ).pipe(
-      tap((response) => this.storeTokens(response))
-    );
-  }
+  loginWithPin(request: PinLoginRequest): Observable<any> {
+  return this.http.post<ApiResponse<JwtResponse>>(
+    `${this.baseUrl}/login/pin`,
+    request
+  ).pipe(
+    tap((res) => {
+      if (res.success && res.data) {
+        this.storeTokens(res.data); // Extract the actual JwtResponse from 'data'
+      }
+    })
+  );
+}
 
   // ----------------------
   // Refresh token
@@ -56,6 +62,15 @@ export class AuthService {
       tap((response) => this.storeTokens(response))
     );
   }
+
+  /**
+   * Register a new AppUser
+   * Returns a map containing the JWT token and user object
+   */
+  register(request: RegistrationRequest): Observable<ApiResponse<any>> {
+  // Just return the observable. Don't call saveAuthData here!
+  return this.http.post<ApiResponse<any>>(`${this.baseUrl}/register`, request);
+}
 
   // ----------------------
   // Logout
