@@ -15,22 +15,22 @@ ion-header {
       --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       --color: white;
       --min-height: 64px;
-      
+
       ion-title {
         font-weight: 600;
         letter-spacing: 0.5px;
         font-size: 1.2rem;
       }
     }
-    
+
     &:last-child {
       --background: white;
       --border-color: #e8e8e8;
       --min-height: 56px;
-      
+
       ion-segment {
         height: 44px;
-        
+
         ion-segment-button {
           --background: transparent;
           --background-checked: #667eea;
@@ -41,13 +41,13 @@ ion-header {
           --padding-bottom: 8px;
           min-height: 40px;
           margin: 0 2px;
-          
+
           ion-label {
             font-size: 0.85rem;
             font-weight: 500;
             margin: 0;
           }
-          
+
           &.segment-button-checked {
             --background: #667eea;
             --color: white;
@@ -65,19 +65,19 @@ ion-header {
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  
+
   ion-card-content {
     padding: 16px;
   }
-  
+
   .stats-grid {
     display: flex;
     justify-content: space-around;
     text-align: center;
-    
+
     .stat-item {
       flex: 1;
-      
+
       .stat-value {
         margin: 0;
         font-size: 2.2rem;
@@ -86,7 +86,7 @@ ion-header {
         color: white;
         text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
       }
-      
+
       .stat-label {
         margin: 8px 0 0;
         font-size: 0.75rem;
@@ -106,35 +106,35 @@ ion-header {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   border: 2px solid #ff6b6b;
   background: white;
-  
+
   ion-card-header {
     padding: 16px 16px 8px;
-    
+
     ion-card-title {
       display: flex;
       align-items: center;
       font-size: 1.1rem;
       font-weight: 600;
       color: #ff6b6b;
-      
+
       ion-icon {
         margin-right: 8px;
         font-size: 1.2rem;
       }
     }
   }
-  
+
   ion-card-content {
     padding: 8px 16px 16px;
-    
+
     .gap-stats-row {
       display: flex;
       justify-content: space-between;
       margin-bottom: 12px;
-      
+
       .gap-stat-item {
         flex: 1;
-        
+
         p {
           margin: 0 0 4px;
           font-size: 0.8rem;
@@ -142,44 +142,44 @@ ion-header {
           text-transform: uppercase;
           letter-spacing: 0.5px;
         }
-        
+
         strong {
           display: block;
           font-size: 1.2rem;
           font-weight: 700;
           color: #2c3e50;
           line-height: 1.2;
-          
+
           &.danger {
             color: var(--ion-color-danger);
           }
         }
-        
+
         &:last-child {
           text-align: right;
         }
       }
     }
-    
+
     .range-info {
       margin-top: 12px;
-      
+
       ion-chip {
         margin: 0;
         height: 28px;
         font-size: 0.8rem;
-        
+
         ion-icon {
           font-size: 16px;
           margin-right: 4px;
         }
-        
+
         &[color="success"] {
           --background: #e8f5e9;
           --color: #27ae60;
           border: 1px solid #c8e6c9;
         }
-        
+
         &[color="warning"] {
           --background: #fff3e0;
           --color: #f39c12;
@@ -195,11 +195,11 @@ ion-header {
   margin: 0 16px 16px;
   border-radius: 16px;
   box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
-  
+
   ion-card-content {
     padding: 16px;
   }
-  
+
   ion-searchbar {
     --border-radius: 12px;
     --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -210,7 +210,7 @@ ion-header {
     padding: 0;
     margin-bottom: 16px;
   }
-  
+
   .button-group {
     ion-button {
       --border-radius: 12px;
@@ -221,12 +221,12 @@ ion-header {
       font-weight: 600;
       height: 48px;
       margin: 0;
-      
+
       &:disabled {
         --background: #bdc3c7;
         opacity: 0.7;
       }
-      
+
       ion-icon {
         margin-right: 8px;
         font-size: 20px;
@@ -239,21 +239,21 @@ ion-header {
 .passengers-list {
   margin: 0 16px 16px;
   background: transparent;
-  
+
   ion-list-header {
     --background: transparent;
     --border-color: #e8e8e8;
     padding-left: 0;
     padding-right: 0;
     min-height: 56px;
-    
+
     ion-label {
       font-size: 1rem;
       font-weight: 600;
       color: #2c3e50;
     }
   }
-  
+
   ion-item {
     --background: white;
     --border-color: #f0f0f0;
@@ -265,36 +265,36 @@ ion-header {
     border-radius: 12px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
     transition: all 0.2s ease;
-    
+
     &:active {
       transform: scale(0.99);
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
-    
+
     ion-icon[slot="start"] {
       width: 24px;
       height: 24px;
       margin-right: 12px;
       color: #f39c12;
     }
-    
+
     ion-label {
       font-size: 1rem;
       font-weight: 500;
       color: #2c3e50;
     }
-    
+
     &[detail="true"]::part(detail-icon) {
       color: #667eea;
       opacity: 1;
     }
   }
-  
+
   .ion-text-center {
     --background: transparent;
     --border-color: transparent;
     margin: 40px 0;
-    
+
     ion-label {
       text-align: center;
       color: #95a5a6;
@@ -307,13 +307,13 @@ ion-header {
 .boarded-list {
   margin: 0 16px 16px;
   background: transparent;
-  
+
   ion-list-header {
     --background: transparent;
     --border-color: #e8e8e8;
     padding-left: 0;
     padding-right: 0;
-    
+
     ion-label {
       h2 {
         margin: 0 0 4px;
@@ -321,7 +321,7 @@ ion-header {
         font-weight: 600;
         color: #2c3e50;
       }
-      
+
       p {
         margin: 0;
         font-size: 0.85rem;
@@ -329,12 +329,12 @@ ion-header {
       }
     }
   }
-  
+
   ion-item-sliding {
     margin-bottom: 6px;
     border-radius: 10px;
     overflow: hidden;
-    
+
     ion-item {
       --background: #e8f5e9;
       --border-color: #c8e6c9;
@@ -343,14 +343,14 @@ ion-header {
       --padding-end: 16px;
       --inner-padding-end: 16px;
       border-left: 4px solid #4caf50;
-      
+
       ion-icon[slot="start"] {
         width: 22px;
         height: 22px;
         margin-right: 12px;
         color: #27ae60;
       }
-      
+
       ion-label {
         h2 {
           font-size: 1rem;
@@ -358,7 +358,7 @@ ion-header {
           color: #2c3e50;
           margin: 0 0 4px;
         }
-        
+
         p {
           font-size: 0.85rem;
           color: #666;
@@ -366,28 +366,28 @@ ion-header {
         }
       }
     }
-    
+
     ion-item-options {
       border-radius: 10px;
       overflow: hidden;
-      
+
       ion-item-option {
         --background: #ff9800;
         --color: white;
         font-weight: 600;
-        
+
         ion-icon {
           font-size: 20px;
         }
       }
     }
   }
-  
+
   .ion-text-center {
     --background: transparent;
     --border-color: transparent;
     margin: 40px 0;
-    
+
     ion-label {
       text-align: center;
       color: #95a5a6;
@@ -400,7 +400,7 @@ ion-header {
 ion-fab {
   margin-bottom: 20px;
   margin-right: 16px;
-  
+
   ion-fab-button {
     --background: #800020;
     --background-activated: #f0f0f0;
@@ -409,7 +409,7 @@ ion-fab {
     width: 44px;
     height: 44px;
     margin-bottom: 8px;
-    
+
     ion-icon {
       font-size: 20px;
     }
@@ -423,9 +423,63 @@ ion-toast {
   --border-radius: 12px;
   --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   text-align: center;
-  
+
   &::part(message) {
     font-weight: 500;
+  }
+}
+
+.search-card {
+  margin-bottom: 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  ion-searchbar {
+    --border-radius: 8px;
+    padding-bottom: 8px;
+  }
+
+  .button-group {
+    padding-top: 8px;
+
+    ion-button {
+      height: 50px; // Larger tap target for speed
+      font-weight: 600;
+      transition: all 0.3s ease;
+
+      // Pulse animation when an exact match is found
+      &.button-has-icon.color-success {
+        animation: pulse-green 2s infinite;
+      }
+    }
+  }
+}
+
+// Highlight the first item in the list if it's our exact match
+ion-list ion-item-sliding:first-child {
+  &.exact-match-highlight {
+    --background: var(--ion-color-success-step-50, #f2faf5);
+    border-left: 4px solid var(--ion-color-success);
+
+    ion-label h2 {
+      font-weight: bold;
+      color: var(--ion-color-success-shade);
+    }
+  }
+}
+
+// Animation for the Board button
+@keyframes pulse-green {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.02);
+  }
+
+  100% {
+    transform: scale(1);
   }
 }
 
@@ -435,6 +489,7 @@ ion-toast {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -450,22 +505,22 @@ ion-item-sliding:first-child {
   .stats-card .stats-grid .stat-item .stat-value {
     font-size: 1.8rem;
   }
-  
+
   .gap-stats-card ion-card-content .gap-stats-row .gap-stat-item {
     strong {
       font-size: 1.1rem;
     }
-    
+
     p {
       font-size: 0.7rem;
     }
   }
-  
+
   ion-header ion-toolbar:last-child ion-segment {
     ion-segment-button {
       --padding-start: 6px;
       --padding-end: 6px;
-      
+
       ion-label {
         font-size: 0.75rem;
       }
@@ -496,13 +551,13 @@ ion-item-sliding:first-child {
   margin: 20px 16px;
   --background: transparent;
   --border-color: transparent;
-  
+
   ion-spinner {
     width: 24px;
     height: 24px;
     --color: #667eea;
   }
-  
+
   ion-label {
     color: #7f8c8d;
     font-weight: 500;
@@ -513,19 +568,19 @@ ion-item-sliding:first-child {
 .no-results {
   text-align: center;
   padding: 40px 16px;
-  
+
   ion-icon {
     font-size: 64px;
     color: #bdc3c7;
     margin-bottom: 16px;
   }
-  
+
   h3 {
     color: #95a5a6;
     font-weight: 600;
     margin-bottom: 8px;
   }
-  
+
   p {
     color: #bdc3c7;
     font-size: 0.9rem;

@@ -216,6 +216,13 @@ export class BoardPage implements OnInit, AfterViewInit {
     return this.flightStatus === 'BOARDING_CLOSED' || this.flightStatus === 'DEPARTED';
   }
 
+  isExactMatch(): boolean {
+    const query = this.searchQuery?.trim();
+    return !!query && 
+           this.filteredSequences.length > 0 && 
+           this.filteredSequences[0].sequenceNumber.toString() === query;
+  }
+
   // --- UNDO BOARDING IMPROVED METHOD ---
   async handleUndo(sequence: BoardingSequence) {
     // Prevent action if flight is already closed (preventative UX)
@@ -440,17 +447,26 @@ export class BoardPage implements OnInit, AfterViewInit {
   }
 
   handleSearch(event: any) {
-    const query = event.target.value ? event.target.value.toLowerCase() : '';
+    const query = event.target.value ? event.target.value.toLowerCase().trim() : '';
     this.searchQuery = query;
 
     if (!query) {
-      this.filteredSequences = this.allCheckedIn;
+      this.filteredSequences = [...this.allCheckedIn];
       return;
     }
 
-    this.filteredSequences = this.allCheckedIn.filter(s =>
-      s.sequenceNumber.toString().includes(query)
-    );
+    // Improved priority sorting: Exact matches first, then starts-with, then includes.
+    this.filteredSequences = this.allCheckedIn
+      .filter(s => s.sequenceNumber.toString().includes(query))
+      .sort((a, b) => {
+        const aStr = a.sequenceNumber.toString();
+        const bStr = b.sequenceNumber.toString();
+        if (aStr === query) return -1;
+        if (bStr === query) return 1;
+        if (aStr.startsWith(query) && !bStr.startsWith(query)) return -1;
+        if (bStr.startsWith(query) && !aStr.startsWith(query)) return 1;
+        return 0;
+      });
   }
 
   handleGapSearch(event: any) {
@@ -468,25 +484,19 @@ export class BoardPage implements OnInit, AfterViewInit {
   }
 
   quickBoardBySequence() {
-    if (!this.searchQuery.trim()) return;
-
-    const sequenceNum = parseInt(this.searchQuery.trim());
-    if (isNaN(sequenceNum)) {
-      this.toastrService.error('Please enter a valid sequence number');
-      return;
-    }
+    const query = this.searchQuery.trim();
+    if (!query) return;
 
     if (this.isBoardingClosed) {
       this.toastrService.error('Cannot board passenger. The flight is already closed.');
       return;
     }
 
-    const passenger = this.allCheckedIn.find(
-      s => s.sequenceNumber === sequenceNum
-    );
+    // Since our search now sorts exact matches to index 0, check the first item.
+    const passenger = this.filteredSequences[0];
 
-    if (!passenger) {
-      this.toastrService.error(`Sequence #${sequenceNum} not found or already boarded`);
+    if (!passenger || passenger.sequenceNumber.toString() !== query) {
+      this.toastrService.error(`Sequence #${query} not found in waiting list`);
       return;
     }
 

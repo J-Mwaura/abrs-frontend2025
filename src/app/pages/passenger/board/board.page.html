@@ -1,4 +1,4 @@
- <ion-header [translucent]="true">
+<ion-header [translucent]="true">
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
       <ion-menu-button menu="main-menu"></ion-menu-button>
@@ -79,11 +79,16 @@
         <ion-searchbar #boardInput [(ngModel)]="searchQuery" (ionInput)="handleSearch($event)"
           (keyup.enter)="quickBoardBySequence()" placeholder="Enter sequence to board...">
         </ion-searchbar>
+
         <div class="button-group">
-          <ion-button expand="block" fill="solid" color="primary" [disabled]="!searchQuery"
-            (click)="quickBoardBySequence()">
-            <ion-icon slot="start" name="log-in-outline"></ion-icon>
-            Board #{{searchQuery}}
+          <ion-button expand="block" fill="solid" [color]="isExactMatch() ? 'success' : 'primary'"
+            [disabled]="!searchQuery.trim()" (click)="quickBoardBySequence()">
+
+            <ion-icon slot="start" [name]="isExactMatch() ? 'checkmark-circle-outline' : 'log-in-outline'"></ion-icon>
+
+            <span *ngIf="isExactMatch()">Board Sequence #{{searchQuery}}</span>
+            <span *ngIf="!isExactMatch()">Search #{{searchQuery}}</span>
+
           </ion-button>
         </div>
       </ion-card-content>
@@ -228,29 +233,29 @@
 
     <!-- Missing Sequences List -->
     <ion-list class="gaps-list">
-  <ion-list-header>
-    <ion-label>Missing Sequences ({{filteredMissingSequences.length}})</ion-label>
-  </ion-list-header>
+      <ion-list-header>
+        <ion-label>Missing Sequences ({{filteredMissingSequences.length}})</ion-label>
+      </ion-list-header>
 
-  @for (seq of filteredMissingSequences; track seq) {
-  <ion-item-sliding>
-    <ion-item button detail="true" (click)="presentNoteAlert(seq)">
-      <ion-icon slot="start" name="alert-outline" color="danger"></ion-icon>
-      <ion-label>
-        <h2>Sequence #{{seq}}</h2>
-        <p>Tap to add note or swipe left</p>
-      </ion-label>
-      <ion-badge slot="end" color="danger">MISSING</ion-badge>
-    </ion-item>
+      @for (seq of filteredMissingSequences; track seq) {
+      <ion-item-sliding>
+        <ion-item button detail="true" (click)="presentNoteAlert(seq)">
+          <ion-icon slot="start" name="alert-outline" color="danger"></ion-icon>
+          <ion-label>
+            <h2>Sequence #{{seq}}</h2>
+            <p>Tap to add note or swipe left</p>
+          </ion-label>
+          <ion-badge slot="end" color="danger">MISSING</ion-badge>
+        </ion-item>
 
-    <ion-item-options side="end">
-      <ion-item-option color="primary" (click)="presentNoteAlert(seq)">
-        <ion-icon slot="icon-only" name="document-text-outline"></ion-icon>
-      </ion-item-option>
-    </ion-item-options>
-  </ion-item-sliding>
-  }
-  </ion-list>
+        <ion-item-options side="end">
+          <ion-item-option color="primary" (click)="presentNoteAlert(seq)">
+            <ion-icon slot="icon-only" name="document-text-outline"></ion-icon>
+          </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
+      }
+    </ion-list>
   </div>
   }
 
